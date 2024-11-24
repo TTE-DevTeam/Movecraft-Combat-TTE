@@ -11,6 +11,7 @@ repositories {
     mavenCentral()
     maven("https://repo.papermc.io/repository/maven-public/")
     maven { githubPackage("apdevteam/movecraft")(this) }
+    maven("https://repo.spongepowered.org/repository/maven-public/")
 }
 
 dependencies {
@@ -18,6 +19,8 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT")
     compileOnly("net.countercraft:movecraft:+")
     compileOnly("it.unimi.dsi:fastutil:8.5.11")
+    compileOnly("org.spongepowered:mixin:0.8.5")
+    compileOnly("org.spongepowered:MixinBootstrap:1.0.5")
 }
 
 group = "net.countercraft.movecraft.combat"
