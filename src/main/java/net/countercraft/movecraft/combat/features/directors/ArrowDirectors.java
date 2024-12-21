@@ -10,6 +10,7 @@ import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.craft.PlayerCraft;
 import net.countercraft.movecraft.craft.type.CraftType;
 import net.countercraft.movecraft.craft.type.property.BooleanProperty;
+import net.countercraft.movecraft.craft.type.property.DoubleProperty;
 import net.countercraft.movecraft.util.MathUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -30,6 +31,7 @@ import static net.countercraft.movecraft.util.ChatUtils.ERROR_PREFIX;
 
 public class ArrowDirectors extends Directors implements Listener {
     public static final NamespacedKey ALLOW_ARROW_DIRECTOR_SIGN = new NamespacedKey("movecraft-combat", "allow_arrow_director_sign");
+    public static final NamespacedKey MAX_ARROW_DIRECTOR_ANGLE = new NamespacedKey("movecraft-combat", "max_arrow_director_angle");
     private static final String HEADER = "Arrow Director";
     public static int ArrowDirectorDistance = 50;
     public static int ArrowDirectorRange = 120;
@@ -41,6 +43,7 @@ public class ArrowDirectors extends Directors implements Listener {
 
     public static void register() {
         CraftType.registerProperty(new BooleanProperty("allowArrowDirectorSign", ALLOW_ARROW_DIRECTOR_SIGN, type -> true));
+        CraftType.registerProperty(new DoubleProperty("maxArrowDirectorAngle", MAX_ARROW_DIRECTOR_ANGLE, type -> 45.0D));
     }
 
     public static void load(@NotNull FileConfiguration config) {
@@ -107,26 +110,21 @@ public class ArrowDirectors extends Directors implements Listener {
             }
         }
 
-        if (targetVector.getX() - arrowVector.getX() > 0.5)
-            arrowVector.setX(arrowVector.getX() + 0.5);
-        else if (targetVector.getX() - arrowVector.getX() < -0.5)
-            arrowVector.setX(arrowVector.getX() - 0.5);
-        else
-            arrowVector.setX(targetVector.getX());
-
-        if (targetVector.getY() - arrowVector.getY() > 0.5)
-            arrowVector.setY(arrowVector.getY() + 0.5);
-        else if (targetVector.getY() - arrowVector.getY() < -0.5)
-            arrowVector.setY(arrowVector.getY() - 0.5);
-        else
-            arrowVector.setY(targetVector.getY());
-
-        if (targetVector.getZ() - arrowVector.getZ() > 0.5)
-            arrowVector.setZ(arrowVector.getZ() + 0.5);
-        else if (targetVector.getZ() - arrowVector.getZ() < -0.5)
-            arrowVector.setZ(arrowVector.getZ() - 0.5);
-        else
-            arrowVector.setZ(targetVector.getZ());
+        // Limit the vector to a certain angle
+        final double angleValueRad = Math.toRadians(c.getType().getDoubleProperty(MAX_ARROW_DIRECTOR_ANGLE));
+        final double maxAngle = Math.cos(angleValueRad);
+        final double dotProduct = targetVector.dot(arrowVector);
+        // we need to limit
+        if (dotProduct < maxAngle) {
+            // Step 1: Normalize the target vector (the direction we are aiming at) and the original vector => Already the case
+            // Step 2: Create perpendicular vector in the same plane as both vectors
+            final Vector perpendicularVector = targetVector.clone().subtract(arrowVector.clone().multiply(dotProduct)).normalize();
+            // Step 3: Obtain the correct, limited vector
+            arrowVector = arrowVector.add(perpendicularVector.multiply(Math.tan(angleValueRad))).normalize();
+        } else {
+            // All good, we can use it as we wanted to
+            arrowVector = targetVector;
+        }
 
         arrowVector = arrowVector.multiply(speed); // put the original speed back in, but now along a different trajectory
 
