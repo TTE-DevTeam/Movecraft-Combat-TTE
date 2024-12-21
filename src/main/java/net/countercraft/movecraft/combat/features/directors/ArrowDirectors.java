@@ -18,7 +18,6 @@ import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.SmallFireball;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -112,19 +111,7 @@ public class ArrowDirectors extends Directors implements Listener {
 
         // Limit the vector to a certain angle
         final double angleValueRad = Math.toRadians(c.getType().getDoubleProperty(MAX_ARROW_DIRECTOR_ANGLE));
-        final double maxAngle = Math.cos(angleValueRad);
-        final double dotProduct = targetVector.dot(arrowVector);
-        // we need to limit
-        if (dotProduct < maxAngle) {
-            // Step 1: Normalize the target vector (the direction we are aiming at) and the original vector => Already the case
-            // Step 2: Create perpendicular vector in the same plane as both vectors
-            final Vector perpendicularVector = targetVector.clone().subtract(arrowVector.clone().multiply(dotProduct)).normalize();
-            // Step 3: Obtain the correct, limited vector
-            arrowVector = arrowVector.add(perpendicularVector.multiply(Math.tan(angleValueRad))).normalize();
-        } else {
-            // All good, we can use it as we wanted to
-            arrowVector = targetVector;
-        }
+        arrowVector = DirectorUtils.limitVectorToMaxAngle(targetVector, arrowVector, angleValueRad);
 
         arrowVector = arrowVector.multiply(speed); // put the original speed back in, but now along a different trajectory
 

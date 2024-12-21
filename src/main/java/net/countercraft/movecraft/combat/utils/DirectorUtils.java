@@ -7,6 +7,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BlockIterator;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,6 +48,22 @@ public class DirectorUtils {
         return (int) finalDistance; // casting to an int will floor the result, giving us a bit of safety.
     }
 
+    public static Vector limitVectorToMaxAngle(final Vector targetVector, final Vector originalVector, final double maxAngleInRadian) {
+        // Limit the vector to a certain angle
+        final double maxAngle = Math.cos(maxAngleInRadian);
+        final double dotProduct = targetVector.dot(originalVector);
+        // we need to limit
+        if (dotProduct < maxAngle) {
+            // Step 1: Normalize the target vector (the direction we are aiming at) and the original vector => Already the case
+            // Step 2: Create perpendicular vector in the same plane as both vectors
+            final Vector perpendicularVector = targetVector.clone().subtract(originalVector.clone().multiply(dotProduct)).normalize();
+            // Step 3: Obtain the correct, limited vector
+            return originalVector.clone().add(perpendicularVector.multiply(Math.tan(maxAngleInRadian))).normalize();
+        } else {
+            // All good, we can use it as we wanted to
+            return targetVector.clone();
+        }
+    }
 
     @Nullable
     public static Block getDirectorBlock(@NotNull Player player, int range) {

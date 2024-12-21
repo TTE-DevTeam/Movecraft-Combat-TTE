@@ -1,6 +1,5 @@
 package net.countercraft.movecraft.combat.features.directors;
 
-import com.destroystokyo.paper.Namespaced;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.combat.features.directors.events.CraftDirectEvent;
 import net.countercraft.movecraft.combat.localisation.I18nSupport;
@@ -115,19 +114,7 @@ public class AADirectors extends Directors implements Listener {
 
         // Limit the vector to a certain angle
         final double angleValueRad = Math.toRadians(c.getType().getDoubleProperty(MAX_AA_DIRECTOR_ANGLE));
-        final double maxAngle = Math.cos(angleValueRad);
-        final double dotProduct = targetVector.dot(fireballVector);
-        // we need to limit
-        if (dotProduct < maxAngle) {
-            // Step 1: Normalize the target vector (the direction we are aiming at) and the original vector => Already the case
-            // Step 2: Create perpendicular vector in the same plane as both vectors
-            final Vector perpendicularVector = targetVector.clone().subtract(fireballVector.clone().multiply(dotProduct)).normalize();
-            // Step 3: Obtain the correct, limited vector
-            fireballVector = fireballVector.add(perpendicularVector.multiply(Math.tan(angleValueRad))).normalize();
-        } else {
-            // All good, we can use it as we wanted to
-            fireballVector = targetVector;
-        }
+        fireballVector = DirectorUtils.limitVectorToMaxAngle(targetVector, fireballVector, angleValueRad);
 
         fireballVector = fireballVector.multiply(speed); // put the original speed back in, but now along a different trajectory
 

@@ -14,13 +14,8 @@ import net.countercraft.movecraft.craft.SinkingCraft;
 import net.countercraft.movecraft.craft.type.CraftType;
 import net.countercraft.movecraft.craft.type.property.BooleanProperty;
 import net.countercraft.movecraft.craft.type.property.DoubleProperty;
-import net.countercraft.movecraft.util.ChatUtils;
 import net.countercraft.movecraft.util.MathUtils;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -144,20 +139,7 @@ public class CannonDirectors extends Directors implements Listener {
 
         // Limit the vector to a certain angle
         final double angleValueRad = Math.toRadians(c.getType().getDoubleProperty(MAX_CANNON_DIRECTOR_ANGLE));
-        final double maxAngle = Math.cos(angleValueRad);
-        final double dotProduct = targetVector.dot(tntVector);
-        // we need to limit
-        if (dotProduct < maxAngle) {
-            // Step 1: Normalize the target vector (the direction we are aiming at) and the original vector => Already the case
-            // Step 2: Create perpendicular vector in the same plane as both vectors
-            final Vector perpendicularVector = targetVector.clone().subtract(tntVector.clone().multiply(dotProduct)).normalize();
-            // Step 3: Obtain the correct, limited vector
-            tntVector = tntVector.add(perpendicularVector.multiply(Math.tan(angleValueRad))).normalize();
-        } else {
-            // All good, we can use it as we wanted to
-            tntVector = targetVector;
-        }
-
+        tntVector = DirectorUtils.limitVectorToMaxAngle(targetVector, tntVector, angleValueRad);
 
         tntVector = tntVector.multiply(horizontalSpeed); // put the original speed back in, but now along a different trajectory
 
