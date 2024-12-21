@@ -1,5 +1,6 @@
 package net.countercraft.movecraft.combat.features.directors;
 
+import com.destroystokyo.paper.Namespaced;
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.combat.features.directors.events.CraftDirectEvent;
 import net.countercraft.movecraft.combat.localisation.I18nSupport;
@@ -10,6 +11,7 @@ import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.craft.PlayerCraft;
 import net.countercraft.movecraft.craft.type.CraftType;
 import net.countercraft.movecraft.craft.type.property.BooleanProperty;
+import net.countercraft.movecraft.craft.type.property.DoubleProperty;
 import net.countercraft.movecraft.util.MathUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -32,6 +34,7 @@ import static net.countercraft.movecraft.util.ChatUtils.ERROR_PREFIX;
 
 public class AADirectors extends Directors implements Listener {
     public static final NamespacedKey ALLOW_AA_DIRECTOR_SIGN = new NamespacedKey("movecraft-combat", "allow_aa_director_sign");
+    public static final NamespacedKey MAX_AA_DIRECTOR_ANGLE = new NamespacedKey("movecraft-combat", "max_aa_director_angle");
     private static final String HEADER = "AA Director";
     public static int AADirectorDistance = 50;
     public static int AADirectorRange = 120;
@@ -43,6 +46,7 @@ public class AADirectors extends Directors implements Listener {
 
     public static void register() {
         CraftType.registerProperty(new BooleanProperty("allowAADirectorSign", ALLOW_AA_DIRECTOR_SIGN, type -> true));
+        CraftType.registerProperty(new DoubleProperty("maxAADirectorAngle", MAX_AA_DIRECTOR_ANGLE, type -> 45.0D));
     }
 
     public static void load(@NotNull FileConfiguration config) {
@@ -105,36 +109,29 @@ public class AADirectors extends Directors implements Listener {
             Block targetBlock = DirectorUtils.getDirectorBlock(p, AADirectorRange);
             if (targetBlock != null && !targetBlock.getType().isAir()) {
                 targetVector = targetBlock.getLocation().toVector().subtract(fireball.getLocation().toVector());
-                targetVector = targetVector.normalize();
             }
         }
+        targetVector = targetVector.normalize();
 
-        if (targetVector.getX() - fireballVector.getX() > 0.5)
-            fireballVector.setX(fireballVector.getX() + 0.5);
-        else if (targetVector.getX() - fireballVector.getX() < -0.5)
-            fireballVector.setX(fireballVector.getX() - 0.5);
-        else
-            fireballVector.setX(targetVector.getX());
-
-        if (targetVector.getY() - fireballVector.getY() > 0.5)
-            fireballVector.setY(fireballVector.getY() + 0.5);
-        else if (targetVector.getY() - fireballVector.getY() < -0.5)
-            fireballVector.setY(fireballVector.getY() - 0.5);
-        else
-            fireballVector.setY(targetVector.getY());
-
-        if (targetVector.getZ() - fireballVector.getZ() > 0.5)
-            fireballVector.setZ(fireballVector.getZ() + 0.5);
-        else if (targetVector.getZ() - fireballVector.getZ() < -0.5)
-            fireballVector.setZ(fireballVector.getZ() - 0.5);
-        else
-            fireballVector.setZ(targetVector.getZ());
+        // Limit the vector to a certain angle
+        final double angleValueRad = Math.toRadians(c.getType().getDoubleProperty(MAX_AA_DIRECTOR_ANGLE));
+        final double maxAngle = Math.cos(angleValueRad);
+        final double dotProduct = targetVector.dot(fireballVector);
+        // we need to limit
+        if (dotProduct < maxAngle) {
+            // Step 1: Normalize the target vector (the direction we are aiming at) and the original vector => Already the case
+            // Step 2: Create perpendicular vector in the same plane as both vectors
+            final Vector perpendicularVector = targetVector.clone().subtract(fireballVector.clone().multiply(dotProduct)).normalize();
+            // Step 3: Obtain the correct, limited vector
+            fireballVector = fireballVector.add(perpendicularVector.multiply(Math.tan(angleValueRad))).normalize();
+        } else {
+            // All good, we can use it as we wanted to
+            fireballVector = targetVector;
+        }
 
         fireballVector = fireballVector.multiply(speed); // put the original speed back in, but now along a different trajectory
 
-        fireballVector.setX(MathHelper.clamp(fireballVector.getX()));
-        fireballVector.setY(MathHelper.clamp(fireballVector.getY()));
-        fireballVector.setZ(MathHelper.clamp(fireballVector.getZ()));
+        MathHelper.clampVectorModify(fireballVector);
 
         try {
             fireballVector.checkFinite();
