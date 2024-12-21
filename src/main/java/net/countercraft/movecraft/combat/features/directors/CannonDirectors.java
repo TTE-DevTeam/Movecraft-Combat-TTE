@@ -13,6 +13,7 @@ import net.countercraft.movecraft.craft.PlayerCraft;
 import net.countercraft.movecraft.craft.SinkingCraft;
 import net.countercraft.movecraft.craft.type.CraftType;
 import net.countercraft.movecraft.craft.type.property.BooleanProperty;
+import net.countercraft.movecraft.craft.type.property.DoubleProperty;
 import net.countercraft.movecraft.util.ChatUtils;
 import net.countercraft.movecraft.util.MathUtils;
 import org.bukkit.Bukkit;
@@ -43,6 +44,7 @@ import static net.countercraft.movecraft.util.ChatUtils.ERROR_PREFIX;
 
 public class CannonDirectors extends Directors implements Listener {
     public static final NamespacedKey ALLOW_CANNON_DIRECTOR_SIGN = new NamespacedKey("movecraft-combat", "allow_cannon_director_sign");
+    public static final NamespacedKey MAX_CANNON_DIRECTOR_ANGLE = new NamespacedKey("movecraft-combat", "max_cannon_director_angle");
     private static final String HEADER = "Cannon Director";
     public static int CannonDirectorDistance = 100;
     public static int CannonDirectorRange = 120;
@@ -56,6 +58,7 @@ public class CannonDirectors extends Directors implements Listener {
 
     public static void register() {
         CraftType.registerProperty(new BooleanProperty("allowCannonDirectorSign", ALLOW_CANNON_DIRECTOR_SIGN, type -> true));
+        CraftType.registerProperty(new DoubleProperty("maxCannonDirectorAngle", MAX_CANNON_DIRECTOR_ANGLE, type -> 60.0D));
     }
 
     public static void load(@NotNull FileConfiguration config) {
@@ -139,14 +142,26 @@ public class CannonDirectors extends Directors implements Listener {
         // Remove the y-component from the TargetVector and normalize
         targetVector = (new Vector(targetVector.getX(), 0, targetVector.getZ())).normalize();
 
-        // Now set the TNT vector, making sure it falls within the maximum and minimum deflection
-        tntVector.setX(Math.min(Math.max(targetVector.getX(), tntVector.getX() - 0.7), tntVector.getX() + 0.7));
-        tntVector.setZ(Math.min(Math.max(targetVector.getZ(), tntVector.getZ() - 0.7), tntVector.getZ() + 0.7));
+        // Limit the vector to a certain angle
+        final double angleValueRad = Math.toRadians(c.getType().getDoubleProperty(MAX_CANNON_DIRECTOR_ANGLE));
+        final double maxAngle = Math.cos(angleValueRad);
+        final double dotProduct = targetVector.dot(tntVector);
+        // we need to limit
+        if (dotProduct < maxAngle) {
+            // Step 1: Normalize the target vector (the direction we are aiming at) and the original vector => Already the case
+            // Step 2: Create perpendicular vector in the same plane as both vectors
+            final Vector perpendicularVector = targetVector.clone().subtract(tntVector.clone().multiply(dotProduct)).normalize();
+            // Step 3: Obtain the correct, limited vector
+            tntVector = tntVector.add(perpendicularVector.multiply(Math.tan(angleValueRad))).normalize();
+        } else {
+            // All good, we can use it as we wanted to
+            tntVector = targetVector;
+        }
+
 
         tntVector = tntVector.multiply(horizontalSpeed); // put the original speed back in, but now along a different trajectory
 
-        tntVector.setX(MathHelper.clamp(tntVector.getX()));
-        tntVector.setZ(MathHelper.clamp(tntVector.getZ()));
+        MathHelper.clampVector(tntVector);
 
         tntVector.setY(tnt.getVelocity().getY()); // you leave the original Y (or vertical axis) trajectory as it was
 
