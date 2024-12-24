@@ -49,7 +49,13 @@ public class DirectorUtils {
     }
 
     public static Vector limitVectorToMaxAngle(final Vector targetVector, final Vector originalVector, final double maxAngleInRadian) {
-        // TODO: Special case for when the aiming direction is to the opposite side, in that case, return the input vector
+        // Special case for when the aiming direction is to the opposite side, in that case, return the input vector
+        // The originalVector is the normal of a plane. If out targetVector points to behind that plane (contrary to the normal), we are facing away from it
+        final double dotProduct = targetVector.clone().normalize().dot(originalVector.clone().normalize());
+        if (dotProduct < 0) {
+            // We are facing away from the plane, we return what was put in
+            return originalVector.clone();
+        }
         // Limit the vector to a certain angle
         final double maxAngle = Math.cos(maxAngleInRadian);
         final double dotProduct = targetVector.dot(originalVector);
