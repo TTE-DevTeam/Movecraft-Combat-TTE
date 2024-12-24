@@ -58,7 +58,6 @@ public class DirectorUtils {
         }
         // Limit the vector to a certain angle
         final double maxAngle = Math.cos(maxAngleInRadian);
-        final double dotProduct = targetVector.dot(originalVector);
         // we need to limit
         if (dotProduct < maxAngle) {
             // Step 1: Normalize the target vector (the direction we are aiming at) and the original vector => Already the case
