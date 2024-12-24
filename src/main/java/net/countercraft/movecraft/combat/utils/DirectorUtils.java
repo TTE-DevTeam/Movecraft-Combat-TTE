@@ -49,6 +49,7 @@ public class DirectorUtils {
     }
 
     public static Vector limitVectorToMaxAngle(final Vector targetVector, final Vector originalVector, final double maxAngleInRadian) {
+        // TODO: Special case for when the aiming direction is to the opposite side, in that case, return the input vector
         // Limit the vector to a certain angle
         final double maxAngle = Math.cos(maxAngleInRadian);
         final double dotProduct = targetVector.dot(originalVector);
