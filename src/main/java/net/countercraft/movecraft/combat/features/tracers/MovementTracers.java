@@ -66,6 +66,7 @@ public class MovementTracers implements Listener {
         GeneralParticle = Particle.valueOf(config.getString("GeneralParticle", "CRIT"));
     }
 
+    // TODO: Add in minimum distances per axis that the craft has to move before it can spawn new tracers
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onCraftTranslate(CraftTranslateEvent e) {
         if (!MovementTracers)
