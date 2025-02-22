@@ -6,6 +6,7 @@ import net.countercraft.movecraft.combat.features.tracers.config.PlayerConfig;
 import net.countercraft.movecraft.combat.features.tracers.config.PlayerManager;
 import net.countercraft.movecraft.craft.type.CraftType;
 import net.countercraft.movecraft.craft.type.property.DoubleProperty;
+import net.countercraft.movecraft.craft.type.property.IntegerProperty;
 import net.countercraft.movecraft.craft.type.property.MaterialSetProperty;
 import net.countercraft.movecraft.events.CraftTranslateEvent;
 import net.countercraft.movecraft.util.hitboxes.HitBox;
@@ -31,6 +32,7 @@ public class MovementTracers implements Listener {
 
     public static final NamespacedKey MOVEMENT_TRACER_BLOCKS = new NamespacedKey("movecraft-combat", "movement_tracer_blocks");
     public static final NamespacedKey MOVEMENT_TRACER_CHANCE = new NamespacedKey("movecraft-combat", "movement_tracer_chance");
+    public static final NamespacedKey MAX_MOVEMENT_TRACERS = new NamespacedKey("movecraft-combat", "max_movement_tracers");
 
     public static boolean MovementTracers = false;
     public static Particle SpecificParticle = null;
@@ -55,6 +57,7 @@ public class MovementTracers implements Listener {
             return materials;
         }));
         CraftType.registerProperty(new DoubleProperty("movementTracerBlockChance", MOVEMENT_TRACER_CHANCE, type -> 1.0D));
+        CraftType.registerProperty(new IntegerProperty("movementTracersMaxBlocks", MAX_MOVEMENT_TRACERS, type -> -1));
     }
 
     public static void load(@NotNull FileConfiguration config) {
@@ -81,9 +84,17 @@ public class MovementTracers implements Listener {
         final HashSet<Location> generalLocations = new HashSet<>();
 
         final double chance = e.getCraft().getType().getDoubleProperty(MOVEMENT_TRACER_CHANCE);
+        final int maxTracers = e.getCraft().getType().getIntProperty(MAX_MOVEMENT_TRACERS);
+        if (maxTracers == 0) {
+            return;
+        }
 
         if (chance > 0.0D) {
+            int counter = 0;
             for (MovecraftLocation movecraftLocation : difference) {
+                if (counter == maxTracers) {
+                    break;
+                }
                 if (chance < 1.0D) {
                     if (RANDOM.nextDouble() > chance) {
                         continue;
@@ -98,6 +109,7 @@ public class MovementTracers implements Listener {
                     // Else add to normal locations
                     generalLocations.add(spawnLoc);
                 }
+                counter++;
             }
         }
 
