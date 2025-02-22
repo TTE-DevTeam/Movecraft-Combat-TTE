@@ -5,6 +5,7 @@ import net.countercraft.movecraft.combat.MovecraftCombat;
 import net.countercraft.movecraft.combat.features.tracers.config.PlayerConfig;
 import net.countercraft.movecraft.combat.features.tracers.config.PlayerManager;
 import net.countercraft.movecraft.craft.type.CraftType;
+import net.countercraft.movecraft.craft.type.property.DoubleProperty;
 import net.countercraft.movecraft.craft.type.property.MaterialSetProperty;
 import net.countercraft.movecraft.events.CraftTranslateEvent;
 import net.countercraft.movecraft.util.hitboxes.HitBox;
@@ -24,14 +25,20 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.EnumSet;
 import java.util.HashSet;
+import java.util.Random;
 
 public class MovementTracers implements Listener {
+
     public static final NamespacedKey MOVEMENT_TRACER_BLOCKS = new NamespacedKey("movecraft-combat", "movement_tracer_blocks");
+    public static final NamespacedKey MOVEMENT_TRACER_CHANCE = new NamespacedKey("movecraft-combat", "movement_tracer_chance");
+
     public static boolean MovementTracers = false;
     public static Particle SpecificParticle = null;
     public static Particle GeneralParticle = null;
     @NotNull
     private final PlayerManager manager;
+
+    static final Random RANDOM = new Random();
 
 
     public MovementTracers(@NotNull PlayerManager manager) {
@@ -47,6 +54,7 @@ public class MovementTracers implements Listener {
             }
             return materials;
         }));
+        CraftType.registerProperty(new DoubleProperty("movementTracerBlockChance", MOVEMENT_TRACER_CHANCE, type -> 1.0D));
     }
 
     public static void load(@NotNull FileConfiguration config) {
@@ -71,15 +79,25 @@ public class MovementTracers implements Listener {
 
         final HashSet<Location> specificLocations = new HashSet<>();
         final HashSet<Location> generalLocations = new HashSet<>();
-        for (MovecraftLocation movecraftLocation : difference) {
-            Location spawnLoc = movecraftLocation.toBukkit(w).add(0.5, 0.5, 0.5);
-            if (materials.contains(movecraftLocation.toBukkit(w).getBlock().getType())) {
-                // Add to special locations if the block is a movement tracer block
-                specificLocations.add(spawnLoc);
-            }
-            else {
-                // Else add to normal locations
-                generalLocations.add(spawnLoc);
+
+        final double chance = e.getCraft().getType().getDoubleProperty(MOVEMENT_TRACER_CHANCE);
+
+        if (chance > 0.0D) {
+            for (MovecraftLocation movecraftLocation : difference) {
+                if (chance < 1.0D) {
+                    if (RANDOM.nextDouble() > chance) {
+                        continue;
+                    }
+                }
+                Location spawnLoc = movecraftLocation.toBukkit(w).add(0.5, 0.5, 0.5);
+                if (materials.contains(movecraftLocation.toBukkit(w).getBlock().getType())) {
+                    // Add to special locations if the block is a movement tracer block
+                    specificLocations.add(spawnLoc);
+                }
+                else {
+                    // Else add to normal locations
+                    generalLocations.add(spawnLoc);
+                }
             }
         }
 
