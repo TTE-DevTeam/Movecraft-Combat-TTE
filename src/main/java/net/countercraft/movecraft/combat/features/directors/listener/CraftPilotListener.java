@@ -1,12 +1,14 @@
 package net.countercraft.movecraft.combat.features.directors.listener;
 
 import net.countercraft.movecraft.MovecraftLocation;
+import net.countercraft.movecraft.combat.MovecraftCombat;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.craft.SinkingCraft;
 import net.countercraft.movecraft.craft.SubCraftImpl;
 import net.countercraft.movecraft.craft.type.CraftType;
 import net.countercraft.movecraft.events.CraftPilotEvent;
+import net.countercraft.movecraft.events.CraftReleaseEvent;
 import net.countercraft.movecraft.processing.functions.Result;
 import net.countercraft.movecraft.sign.AbstractMovecraftSign;
 import net.countercraft.movecraft.sign.AbstractSubcraftSign;
@@ -14,10 +16,12 @@ import net.countercraft.movecraft.sign.MovecraftSignRegistry;
 import net.countercraft.movecraft.sign.SignListener;
 import net.countercraft.movecraft.util.Pair;
 import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
 import org.bukkit.block.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,13 +41,11 @@ public class CraftPilotListener implements Listener {
         }
 
         flagTileEntities(event.getCraft(), block -> (block instanceof Dispenser));
-        flagSubcraftDispensers(event.getCraft()) {
-
-        }
+        flagSubcraftDispensers(event.getCraft());
     }
 
     private static void flagSubcraftDispensers(Craft craft) {
-        Map<MovecraftLocation, Map<CraftType, Set<String>>> signLocations = new HashMap<>();
+        Map<MovecraftLocation, Map<CraftType, String>> signLocations = new HashMap<>();
         for (MovecraftLocation mLoc : craft.getHitBox()) {
             // I hate this...
             // TODO: Switch to use CCCorp version with blockName(...) => Only returns tracked or all signs directly
@@ -66,7 +68,7 @@ public class CraftPilotListener implements Listener {
                     if (craftType == null) {
                         continue;
                     }
-                    signLocations.computeIfAbsent(mLoc, b -> new HashMap<>()).computeIfAbsent(craftType, ct -> new HashSet<>()).add(signWrapper.getRaw(3));
+                    signLocations.computeIfAbsent(mLoc, b -> new HashMap<>()).put(craftType, signWrapper.getRaw(3));
                 }
             }
         }
@@ -75,8 +77,8 @@ public class CraftPilotListener implements Listener {
             return;
         }
 
-        for (Map.Entry<MovecraftLocation, Map<CraftType, Set<String>>> entry : signLocations.entrySet()) {
-            for (Map.Entry<CraftType, Set<String>> entryInner : entry.getValue().entrySet()) {
+        for (Map.Entry<MovecraftLocation, Map<CraftType, String>> entry : signLocations.entrySet()) {
+            for (Map.Entry<CraftType, String> entryInner : entry.getValue().entrySet()) {
                 CraftManager.getInstance().detect(
                         entry.getKey(),
                         entryInner.getKey(),
@@ -95,7 +97,23 @@ public class CraftPilotListener implements Listener {
         }
     }
 
-    private static void flagDispensers(Craft subcraft, Craft craft, Set<String> value) {
+    private static void flagDispensers(Craft subcraft, Craft parent, String value) {
+        for (MovecraftLocation mLoc : subcraft.getHitBox()) {
+            Block block = mLoc.toBukkit(parent.getWorld()).getBlock();
+            if (!(block.getState() instanceof Container))
+                continue;
+
+            Container blockEntity = (Container)block.getState();
+
+            if (blockEntity.customName() == null) {
+                blockEntity.customName(Component.text(value));
+                blockEntity.update();
+            }
+
+        }
+        parent.setHitBox(parent.getHitBox().union(subcraft.getHitBox()));
+        CraftManager.getInstance().release(subcraft, CraftReleaseEvent.Reason.FORCE, true);
+
     }
 
     private static void flagTileEntities(Craft craft, Predicate<BlockState> testPredicate) {
