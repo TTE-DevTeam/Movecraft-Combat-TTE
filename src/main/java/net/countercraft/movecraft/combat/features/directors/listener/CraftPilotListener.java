@@ -1,11 +1,7 @@
 package net.countercraft.movecraft.combat.features.directors.listener;
 
 import net.countercraft.movecraft.MovecraftLocation;
-import net.countercraft.movecraft.combat.MovecraftCombat;
-import net.countercraft.movecraft.craft.Craft;
-import net.countercraft.movecraft.craft.CraftManager;
-import net.countercraft.movecraft.craft.SinkingCraft;
-import net.countercraft.movecraft.craft.SubCraftImpl;
+import net.countercraft.movecraft.craft.*;
 import net.countercraft.movecraft.craft.type.CraftType;
 import net.countercraft.movecraft.events.CraftPilotEvent;
 import net.countercraft.movecraft.events.CraftReleaseEvent;
@@ -21,12 +17,9 @@ import org.bukkit.block.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.persistence.PersistentDataType;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Predicate;
 
 public class CraftPilotListener implements Listener {
@@ -36,7 +29,7 @@ public class CraftPilotListener implements Listener {
         if (event.getReason() == CraftPilotEvent.Reason.SUB_CRAFT) {
             return;
         }
-        if (event.getCraft() instanceof SinkingCraft) {
+        if (event.getCraft() instanceof SinkingCraft || event.getCraft() instanceof SubCraft) {
             return;
         }
 
@@ -47,22 +40,21 @@ public class CraftPilotListener implements Listener {
     private static void flagSubcraftDispensers(Craft craft) {
         Map<MovecraftLocation, Map<CraftType, String>> signLocations = new HashMap<>();
         for (MovecraftLocation mLoc : craft.getHitBox()) {
-            // I hate this...
-            // TODO: Switch to use CCCorp version with blockName(...) => Only returns tracked or all signs directly
             Block block = mLoc.toBukkit(craft.getWorld()).getBlock();
 
             // Only interested in signs, if no sign => continue
             if (!(block.getState() instanceof Sign))
                 continue;
 
-            // Now, are you a subcraft sign?
             Sign sign = (Sign) block.getState();
 
             for (SignListener.SignWrapper signWrapper : SignListener.INSTANCE.getSignWrappers(sign, true)) {
                 if (signWrapper.getRaw(3) == null || signWrapper.getRaw(3).isBlank()) {
                     continue;
                 }
+
                 AbstractMovecraftSign ams = MovecraftSignRegistry.INSTANCE.get(signWrapper.line(0));
+                // Now, are you a subcraft sign?
                 if (ams instanceof AbstractSubcraftSign ass) {
                     CraftType craftType = CraftManager.getInstance().getCraftTypeFromString(signWrapper.getRaw(1));
                     if (craftType == null) {
