@@ -1,0 +1,118 @@
+package net.countercraft.movecraft.combat.features.directors.listener;
+
+import net.countercraft.movecraft.MovecraftLocation;
+import net.countercraft.movecraft.craft.Craft;
+import net.countercraft.movecraft.craft.CraftManager;
+import net.countercraft.movecraft.craft.SinkingCraft;
+import net.countercraft.movecraft.craft.SubCraftImpl;
+import net.countercraft.movecraft.craft.type.CraftType;
+import net.countercraft.movecraft.events.CraftPilotEvent;
+import net.countercraft.movecraft.processing.functions.Result;
+import net.countercraft.movecraft.sign.AbstractMovecraftSign;
+import net.countercraft.movecraft.sign.AbstractSubcraftSign;
+import net.countercraft.movecraft.sign.MovecraftSignRegistry;
+import net.countercraft.movecraft.sign.SignListener;
+import net.countercraft.movecraft.util.Pair;
+import net.kyori.adventure.audience.Audience;
+import org.bukkit.block.*;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Predicate;
+
+public class CraftPilotListener implements Listener {
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
+    public void onDetect(final CraftPilotEvent event) {
+        if (event.getReason() == CraftPilotEvent.Reason.SUB_CRAFT) {
+            return;
+        }
+        if (event.getCraft() instanceof SinkingCraft) {
+            return;
+        }
+
+        flagTileEntities(event.getCraft(), block -> (block instanceof Dispenser));
+        flagSubcraftDispensers(event.getCraft()) {
+
+        }
+    }
+
+    private static void flagSubcraftDispensers(Craft craft) {
+        Map<MovecraftLocation, Map<CraftType, Set<String>>> signLocations = new HashMap<>();
+        for (MovecraftLocation mLoc : craft.getHitBox()) {
+            // I hate this...
+            // TODO: Switch to use CCCorp version with blockName(...) => Only returns tracked or all signs directly
+            Block block = mLoc.toBukkit(craft.getWorld()).getBlock();
+
+            // Only interested in signs, if no sign => continue
+            if (!(block.getState() instanceof Sign))
+                continue;
+
+            // Now, are you a subcraft sign?
+            Sign sign = (Sign) block.getState();
+
+            for (SignListener.SignWrapper signWrapper : SignListener.INSTANCE.getSignWrappers(sign, true)) {
+                if (signWrapper.getRaw(3) == null || signWrapper.getRaw(3).isBlank()) {
+                    continue;
+                }
+                AbstractMovecraftSign ams = MovecraftSignRegistry.INSTANCE.get(signWrapper.line(0));
+                if (ams instanceof AbstractSubcraftSign ass) {
+                    CraftType craftType = CraftManager.getInstance().getCraftTypeFromString(signWrapper.getRaw(1));
+                    if (craftType == null) {
+                        continue;
+                    }
+                    signLocations.computeIfAbsent(mLoc, b -> new HashMap<>()).computeIfAbsent(craftType, ct -> new HashSet<>()).add(signWrapper.getRaw(3));
+                }
+            }
+        }
+
+        if (signLocations.isEmpty()) {
+            return;
+        }
+
+        for (Map.Entry<MovecraftLocation, Map<CraftType, Set<String>>> entry : signLocations.entrySet()) {
+            for (Map.Entry<CraftType, Set<String>> entryInner : entry.getValue().entrySet()) {
+                CraftManager.getInstance().detect(
+                        entry.getKey(),
+                        entryInner.getKey(),
+                        (type, world, player, parents) -> {
+                            if (parents.size() > 1) 
+                                return new Pair<>(Result.fail(), null);
+                            
+                            return new Pair<>(Result.succeed(), new SubCraftImpl(type, world, craft));
+                        },
+                        craft.getWorld(),
+                        null,
+                        Audience.empty(),
+                        (Craft subcraft) -> () -> flagDispensers(subcraft, craft, entryInner.getValue())
+                );
+            }
+        }
+    }
+
+    private static void flagDispensers(Craft subcraft, Craft craft, Set<String> value) {
+    }
+
+    private static void flagTileEntities(Craft craft, Predicate<BlockState> testPredicate) {
+        // Now, find all signs on the craft...
+        for (MovecraftLocation mLoc : craft.getHitBox()) {
+            Block block = mLoc.toBukkit(craft.getWorld()).getBlock();
+            // Only interested in signs, if no sign => continue
+            // Edit: That's useful for dispensers too to flag TNT and the like, but for that one could use a separate listener
+            if (!testPredicate.test(block.getState()))
+                continue;
+            if (!(block.getState() instanceof TileState))
+                continue;
+
+            TileState tile = (TileState) block.getState();
+
+            craft.markTileStateWithUUID(tile);
+            tile.update();
+        }
+    }
+}
