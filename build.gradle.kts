@@ -11,13 +11,23 @@ repositories {
     mavenLocal()
     mavenCentral()
     maven("https://repo.papermc.io/repository/maven-public/")
-    maven { githubPackage("apdevteam/movecraft")(this) }
+
+    ivy {
+        name="Github Releases" // Github Releases
+        url=uri("https://github.com")
+
+        patternLayout {
+            artifact("[organisation]/[module]/releases/download/MC[revision]/[module]-[revision].[ext]")
+        }
+
+        metadataSources { artifact() }
+    }
 }
 
 dependencies {
     api("org.jetbrains:annotations-java5:24.1.0")
     paperweight.paperDevBundle("1.21.4-R0.1-SNAPSHOT")
-    compileOnly("net.countercraft:movecraft:+")
+    implementation("TTE-DevTeam:Movecraft:1.21.x-8.4.1-TTE@jar")
     compileOnly("it.unimi.dsi:fastutil:8.5.11")
 }
 
