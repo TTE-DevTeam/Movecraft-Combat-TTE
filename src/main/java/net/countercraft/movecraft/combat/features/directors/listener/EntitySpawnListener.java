@@ -1,14 +1,12 @@
 package net.countercraft.movecraft.combat.features.directors.listener;
 
-import net.countercraft.movecraft.combat.event.DispenserDispenseEntityEvent;
+import de.dertoaster.extraevents.api.event.DispenserDispenseEntityEvent;
 import net.countercraft.movecraft.combat.features.directors.DirectorHelper;
 import net.countercraft.movecraft.craft.Craft;
-import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.util.MathUtils;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
-import org.bukkit.block.TileState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.TNTPrimed;
