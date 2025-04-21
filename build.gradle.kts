@@ -3,7 +3,8 @@ plugins {
     `maven-publish`
     id("io.github.0ffz.github-packages") version "1.2.1"
     id("io.papermc.hangar-publish-plugin") version "0.1.2"
-    id("io.papermc.paperweight.userdev") version "2.0.0-beta.12"
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.13"
+    id("io.github.goooler.shadow") version "8.1.7"
 }
 
 repositories {
@@ -13,7 +14,7 @@ repositories {
     maven("https://repo.papermc.io/repository/maven-public/")
 
     ivy {
-        name="Github Releases" // Github Releases
+        name="Github Releases" // GitHub Releases
         url=uri("https://github.com")
 
         patternLayout {
@@ -22,13 +23,25 @@ repositories {
 
         metadataSources { artifact() }
     }
+
+    ivy {
+        name="Github Releases" // GitHub Releases (ExtraEvents API)
+        url=uri("https://github.com")
+
+        patternLayout {
+            artifact("[organisation]/[module]/releases/download/[revision]/[module]-api-[revision].[ext]")
+        }
+
+        metadataSources { artifact() }
+    }
 }
 
 dependencies {
-    api("org.jetbrains:annotations-java5:24.1.0")
+    compileOnly("org.jetbrains:annotations-java5:24.1.0")
     paperweight.paperDevBundle("1.21.4-R0.1-SNAPSHOT")
-    implementation("TTE-DevTeam:Movecraft:1.21.x-8.4.1-TTE@jar")
+    compileOnly("TTE-DevTeam:Movecraft:1.21.x-8.4.2-TTE@jar")
     compileOnly("it.unimi.dsi:fastutil:8.5.11")
+    api("TTE-DevTeam:extraevents:1.0.0@jar")
 }
 
 paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArtifactConfiguration.MOJANG_PRODUCTION
@@ -37,6 +50,7 @@ group = "net.countercraft.movecraft.combat"
 version = "2.2.2"
 description = "Movecraft-Combat-TTE"
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+
 
 tasks.jar {
     archiveBaseName.set("Movecraft-Combat")
