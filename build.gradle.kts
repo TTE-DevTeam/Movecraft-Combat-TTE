@@ -37,7 +37,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly("org.jetbrains:annotations-java5:24.1.0")
+    annotationProcessor("org.jetbrains:annotations-java5:24.1.0")
     paperweight.paperDevBundle("1.21.4-R0.1-SNAPSHOT")
     compileOnly("TTE-DevTeam:Movecraft:1.21.x-8.4.2-TTE@jar")
     compileOnly("it.unimi.dsi:fastutil:8.5.11")
