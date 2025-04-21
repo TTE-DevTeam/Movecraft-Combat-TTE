@@ -56,6 +56,11 @@ public class EntitySpawnListener implements Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
     public void onProjectileSpawnEvent(EntitySpawnEvent event) {
         Block block = event.getLocation().getBlock();
+
+        if (!(event.getEntity() instanceof Projectile)) {
+            return;
+        }
+
         if (event.getEntity() instanceof Projectile projectile && projectile.getShooter() instanceof BlockProjectileSource bps) {
             block = bps.getBlock();
         }
