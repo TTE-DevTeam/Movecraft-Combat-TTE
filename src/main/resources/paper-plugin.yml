@@ -7,6 +7,7 @@ author: TylerS1066
 contributors: [cccm5, a4bde, eirik1996, BaccaYarro]
 description: Combat features of Movecraft
 website: https://github.com/TTE-DevTeam/Movecraft-Combat-TTE
+bootstrapper: net.countercraft.movecraft.combat.MovecraftCombatBootstrapper
 dependencies:
   server:
     Movecraft:
