@@ -33,7 +33,16 @@ public class TNTDirectorDataAccess {
         return Optional.ofNullable(tntPrimed.getPersistentDataContainer().getOrDefault(KEY_INITIAL_DIRECTION_TICK, PersistentDataType.LONG, null));
     }
 
-    public static Optional<Vector> getPreDirectVelocity(final TNTPrimed tntPrimed) {
+    public static void setPreDirectionVelocity(final TNTPrimed tntPrimed, final Vector vector) {
+        tntPrimed.getPersistentDataContainer().set(KEY_VELOCITY_PRE_DIRECT, VECTOR_PERSISTENT_DATA_TYPE, vector);
+    }
+
+    public static Vector getPreDirectVelocity(final TNTPrimed tntPrimed) {
+        Optional<Vector> opt = getOptionalPreDirectVelocity(tntPrimed);
+        return opt.orElseGet(() -> new Vector(0,0,0));
+    }
+
+    public static Optional<Vector> getOptionalPreDirectVelocity(final TNTPrimed tntPrimed) {
         return Optional.ofNullable(tntPrimed.getPersistentDataContainer().getOrDefault(KEY_VELOCITY_PRE_DIRECT, VECTOR_PERSISTENT_DATA_TYPE, null));
     }
 

@@ -18,20 +18,21 @@ public class TNTPropellListener implements Listener {
         }
         // 2) Did we already direct this entity?
         if (!TNTDirectorDataAccess.wasAlreadyDirected(event.getProjectile())) {
-            //   2.1) No? => Send call to the relevant craft and it's directors to handle it
-            // TODO: Update dependency
-            //event.setCancelled(true);
+            // 2.1) No? => Send call to the relevant craft and it's directors to handle it
+            event.setCancelled(true);
         } else {
-            //   2.2) Yes? => If the time of initial direction is not too long ago (aka in the same tick!), Add onto the original modified velocity (needs to be stored!) and apply the length onto the directed velocity!
+            // 2.2) Yes? => If the time of initial direction is not too long ago (aka in the same tick!), Add onto the original modified velocity (needs to be stored!) and apply the length onto the directed velocity!
             // 3) In case it was directed or we increased our direction-velocity, we need to cancel the event!
             if (TNTDirectorDataAccess.wasDirectedInSameTick(event.getProjectile())) {
-                Vector potentialPush = null;//event.getPushDirection();
-                double power = potentialPush.length();
+                Vector potentialPush = event.getPushDirection();
+                Vector originalVelocity = TNTDirectorDataAccess.getPreDirectVelocity(event.getProjectile()).clone();
+                originalVelocity.add(potentialPush);
+                TNTDirectorDataAccess.setPreDirectionVelocity(event.getProjectile(), originalVelocity);
+                double power = originalVelocity.length();
                 Vector currentVelocity = event.getEntity().getVelocity();
-                double resultingPower = currentVelocity.length() + power;
-                event.getProjectile().setVelocity(currentVelocity.normalize().multiply(resultingPower));
+                event.getProjectile().setVelocity(currentVelocity.normalize().multiply(power));
 
-                //event.setCancelled(true);
+                event.setCancelled(true);
             } else {
                 // Nothing to do...
             }
