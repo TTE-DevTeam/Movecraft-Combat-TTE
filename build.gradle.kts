@@ -41,7 +41,7 @@ dependencies {
     paperweight.paperDevBundle("1.21.4-R0.1-SNAPSHOT")
     compileOnly("TTE-DevTeam:Movecraft:1.21.x-8.4.2-TTE@jar")
     compileOnly("it.unimi.dsi:fastutil:8.5.11")
-    api("TTE-DevTeam:extraevents:1.0.0@jar")
+    api("TTE-DevTeam:extraevents:1.2.0@jar")
 }
 
 paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArtifactConfiguration.MOJANG_PRODUCTION
