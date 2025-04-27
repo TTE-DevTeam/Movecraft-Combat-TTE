@@ -122,7 +122,6 @@ public final class MovecraftCombat extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new AntiRadar(), this);
         var contactExplosives = new ContactExplosives();
         getServer().getPluginManager().registerEvents(contactExplosives, this);
-        contactExplosives.runTaskTimer(this, 0, 1); // Every tick
         getServer().getPluginManager().registerEvents(new DurabilityOverride(), this);
         var fireballLifespan = new FireballLifespan();
         getServer().getPluginManager().registerEvents(fireballLifespan, this);
