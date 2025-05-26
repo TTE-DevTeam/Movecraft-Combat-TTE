@@ -5,6 +5,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
@@ -72,8 +74,8 @@ public class DirectorUtils {
     }
 
     @Nullable
-    public static Block getDirectorBlock(@NotNull Player player, int range) {
-        Iterator<Block> itr = new BlockIterator(player, Math.min(range, distanceToRender(player.getLocation())));
+    public static Block getDirectorBlock(@NotNull LivingEntity entity, int range) {
+        Iterator<Block> itr = new BlockIterator(entity.getEyeLocation(), Math.min(range, distanceToRender(entity.getLocation())));
         while (itr.hasNext()) {
             Block block = itr.next();
             Material material = block.getType();
