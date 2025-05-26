@@ -1,6 +1,7 @@
 package net.countercraft.movecraft.combat.features.directors.listener;
 
 import de.dertoaster.extraevents.api.event.DispenserDispenseEntityEvent;
+import net.countercraft.movecraft.combat.features.directors.CraftDirectorData;
 import net.countercraft.movecraft.combat.features.directors.DirectorHelper;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.util.MathUtils;
@@ -51,6 +52,11 @@ public class EntitySpawnListener implements Listener {
         String containerName = PlainTextComponentSerializer.plainText().serialize(container.customName());
 
         DirectorHelper.flagEntity(entity, containerName);
+        // TODO: Test performance!
+        if (entity instanceof TNTPrimed tntPrimed) {
+            // Mark the tnt that it needs to be directed
+            DirectorHelper.flagTNTForDirection(tntPrimed, MathUtils.getCraftByPersistentBlockData(block.getLocation()));
+        }
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
@@ -84,6 +90,7 @@ public class EntitySpawnListener implements Listener {
             return;
         }
         //Call the director event for the craft, rest is handled on the craft itself
+        CraftDirectorData.get(craft).attemptDirectEntity(event.getEntity());
     }
 
 }
