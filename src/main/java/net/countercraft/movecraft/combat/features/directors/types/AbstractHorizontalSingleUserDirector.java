@@ -5,9 +5,9 @@ import org.bukkit.util.Vector;
 
 import java.util.Map;
 
-public abstract class HorizontalSingleUserDirector extends SingleUserDirector {
+public abstract class AbstractHorizontalSingleUserDirector extends AbstractSingleUserDirector {
 
-    public HorizontalSingleUserDirector(Map<String, Object> rawData) {
+    public AbstractHorizontalSingleUserDirector(Map<String, Object> rawData) {
         super(rawData);
     }
 

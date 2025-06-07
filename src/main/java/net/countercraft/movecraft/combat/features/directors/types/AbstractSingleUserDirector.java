@@ -4,9 +4,9 @@ import net.countercraft.movecraft.combat.features.directors.types.data.SingleUse
 
 import java.util.Map;
 
-public abstract class SingleUserDirector extends AbstractDirector<SingleUserDirectorRuntimeData> {
+public abstract class AbstractSingleUserDirector extends AbstractDirector<SingleUserDirectorRuntimeData> {
 
-    public SingleUserDirector(Map<String, Object> rawData) {
+    public AbstractSingleUserDirector(Map<String, Object> rawData) {
         super(rawData);
     }
 
