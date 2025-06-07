@@ -37,6 +37,7 @@ import java.util.UUID;
 
 import static net.countercraft.movecraft.util.ChatUtils.ERROR_PREFIX;
 
+@Deprecated(forRemoval = true)
 public class CannonDirectors extends Directors implements Listener {
     public static final NamespacedKey ALLOW_CANNON_DIRECTOR_SIGN = new NamespacedKey("movecraft-combat", "allow_cannon_director_sign");
     public static final NamespacedKey MAX_CANNON_DIRECTOR_ANGLE = new NamespacedKey("movecraft-combat", "max_cannon_director_angle");
