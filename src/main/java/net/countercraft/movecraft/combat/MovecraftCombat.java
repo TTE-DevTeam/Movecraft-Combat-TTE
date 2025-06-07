@@ -6,19 +6,23 @@ import net.countercraft.movecraft.combat.features.directors.AADirectors;
 import net.countercraft.movecraft.combat.features.directors.ArrowDirectors;
 import net.countercraft.movecraft.combat.features.directors.CannonDirectors;
 import net.countercraft.movecraft.combat.features.directors.Directors;
+import net.countercraft.movecraft.combat.features.directors.types.MultiUserProjectileDirector;
+import net.countercraft.movecraft.combat.features.directors.types.MultiUserTNTDirector;
+import net.countercraft.movecraft.combat.features.directors.types.SingleUserProjectileDirector;
+import net.countercraft.movecraft.combat.features.directors.types.SingleUserTNTDirector;
 import net.countercraft.movecraft.combat.features.tracers.MovementTracers;
 import net.countercraft.movecraft.combat.features.tracers.TNTTracers;
 import net.countercraft.movecraft.combat.features.tracers.commands.MovementTracerSettingCommand;
 import net.countercraft.movecraft.combat.features.tracers.commands.TNTTracerModeCommand;
 import net.countercraft.movecraft.combat.features.tracers.commands.TNTTracerSettingCommand;
 import net.countercraft.movecraft.combat.features.tracers.config.PlayerManager;
-import net.countercraft.movecraft.combat.features.BlockBehaviorOverride;
 import net.countercraft.movecraft.combat.features.tracking.DamageTracking;
 import net.countercraft.movecraft.combat.features.tracking.FireballTracking;
 import net.countercraft.movecraft.combat.features.tracking.TNTTracking;
 import net.countercraft.movecraft.combat.listener.CraftCollisionExplosionListener;
 import net.countercraft.movecraft.combat.listener.ExplosionListener;
 import net.countercraft.movecraft.combat.localisation.I18nSupport;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -44,6 +48,10 @@ public final class MovecraftCombat extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
+        ConfigurationSerialization.registerClass(SingleUserProjectileDirector.class, "SingleUserProjectileDirector");
+        ConfigurationSerialization.registerClass(MultiUserProjectileDirector.class, "MultiUserProjectileDirector");
+        ConfigurationSerialization.registerClass(SingleUserTNTDirector.class, "SingleUserTNTDirector");
+        ConfigurationSerialization.registerClass(MultiUserTNTDirector.class, "MultiUserTNTDirector");
 
         // Save default config, create default userdata and language if needed
         saveDefaultConfig();
