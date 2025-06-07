@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.function.Function;
 
-public class MultiUserProjectileDirector extends AbstractMultiUserDirector<MultiUserDirectorRuntimeData> implements ProjectileDirector {
+public class MultiUserProjectileDirector extends AbstractMultiUserDirector<MultiUserDirectorRuntimeData> implements IProjectileDirector {
 
     private boolean disableGravity;
 

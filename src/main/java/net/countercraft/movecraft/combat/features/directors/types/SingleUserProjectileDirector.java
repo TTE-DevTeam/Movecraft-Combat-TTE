@@ -1,20 +1,18 @@
 package net.countercraft.movecraft.combat.features.directors.types;
 
-import net.countercraft.movecraft.combat.utils.ConfigHelper;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.type.CraftType;
 import org.apache.commons.lang3.tuple.Triple;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.function.Function;
 
-public class SingleUserProjectileDirector extends AbstractSingleUserDirector implements ProjectileDirector {
+public class SingleUserProjectileDirector extends AbstractSingleUserDirector implements IProjectileDirector {
 
     private boolean disableGravity;
 

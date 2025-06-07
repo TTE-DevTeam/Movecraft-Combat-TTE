@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Map;
 import java.util.function.Function;
 
-public interface ProjectileDirector {
+public interface IProjectileDirector {
 
     public void setDisableGravity(boolean value);
     public boolean getDisableGravity();
