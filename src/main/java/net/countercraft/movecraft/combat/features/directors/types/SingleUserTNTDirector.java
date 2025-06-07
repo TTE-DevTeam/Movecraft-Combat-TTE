@@ -1,0 +1,42 @@
+package net.countercraft.movecraft.combat.features.directors.types;
+
+import net.countercraft.movecraft.craft.type.CraftType;
+import org.apache.commons.lang3.tuple.Triple;
+import org.bukkit.NamespacedKey;
+import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
+import java.util.function.Function;
+
+public class SingleUserTNTDirector extends AbstractSingleUserDirector implements IHorizontalDirector, ITNTDirector {
+
+    public SingleUserTNTDirector(Map<String, Object> rawData) {
+        super(rawData);
+    }
+
+    @Override
+    protected void deserialize(Map<String, Object> rawData) {
+        // we dont have custom data, ignore it!
+    }
+
+    @Override
+    public @NotNull Map<String, Object> addToSerialize(@NotNull Map<String, Object> serialized) {
+        return Map.of();
+    }
+
+    @Override
+    protected Vector clampVector(Vector adjustedVelocity, Vector originalVelocity) {
+        return horizontalDirector_clampVector(adjustedVelocity, originalVelocity);
+    }
+
+    @Override
+    protected Triple<String, NamespacedKey, Function<CraftType, Double>> getMaxAngleCraftTypeDoubleProperty() {
+        return tntDirector_getMaxAngleCraftTypeDoubleProperty();
+    }
+
+    @Override
+    protected Triple<String, NamespacedKey, Function<CraftType, Boolean>> getAllowedOnCraftCraftTypeBooleanProperty() {
+        return tntDirector_getAllowedOnCraftCraftTypeBooleanProperty();
+    }
+}
