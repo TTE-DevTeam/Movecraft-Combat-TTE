@@ -28,6 +28,7 @@ public class DirectorHelper {
         if (craft instanceof SinkingCraft) {
             return;
         }
+        // TODO: Refactor to new system!
         if (!craft.getType().getBoolProperty(CannonDirectors.ALLOW_CANNON_DIRECTOR_SIGN)) {
             return;
         }

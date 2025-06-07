@@ -31,6 +31,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static net.countercraft.movecraft.util.ChatUtils.ERROR_PREFIX;
 
+@Deprecated(forRemoval = true)
 public class AADirectors extends Directors implements Listener {
     public static final NamespacedKey ALLOW_AA_DIRECTOR_SIGN = new NamespacedKey("movecraft-combat", "allow_aa_director_sign");
     public static final NamespacedKey MAX_AA_DIRECTOR_ANGLE = new NamespacedKey("movecraft-combat", "max_aa_director_angle");
