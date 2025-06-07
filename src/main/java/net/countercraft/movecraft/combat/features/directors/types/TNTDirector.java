@@ -1,14 +1,17 @@
 package net.countercraft.movecraft.combat.features.directors.types;
 
+import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.type.CraftType;
 import org.apache.commons.lang3.tuple.Triple;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Entity;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.function.Function;
 
-public class TNTDirector extends AbstractHorizontalSingleUserDirector {
+public class TNTDirector extends AbstractSingleUserDirector implements IHorizontalDirector {
 
     public TNTDirector(Map<String, Object> rawData) {
         super(rawData);
@@ -22,6 +25,11 @@ public class TNTDirector extends AbstractHorizontalSingleUserDirector {
     @Override
     public @NotNull Map<String, Object> addToSerialize(@NotNull Map<String, Object> serialized) {
         return Map.of();
+    }
+
+    @Override
+    protected Vector clampVector(Vector adjustedVelocity, Vector originalVelocity) {
+        return horizontalDirector_clampVector(adjustedVelocity, originalVelocity);
     }
 
     @Override
