@@ -1,15 +1,11 @@
 package net.countercraft.movecraft.combat.features.directors.types;
 
-import net.countercraft.movecraft.combat.utils.ConfigHelper;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.type.CraftType;
 import org.apache.commons.lang3.tuple.Triple;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Projectile;
 import org.bukkit.entity.TNTPrimed;
-import org.bukkit.entity.ThrowableProjectile;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
