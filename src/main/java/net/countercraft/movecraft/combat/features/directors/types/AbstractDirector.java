@@ -64,6 +64,8 @@ public abstract class AbstractDirector<T extends AbstractDirectorRuntimeData> im
             throw new IllegalArgumentException("Entity types is not a list!");
         }
 
+        this.deserialize(rawData);
+
         if (this.getAllowedOnCraftCraftTypeBooleanProperty() != null) {
             this.allowedOnCraftKey = this.getAllowedOnCraftCraftTypeBooleanProperty().getMiddle();
         } else {
@@ -76,6 +78,8 @@ public abstract class AbstractDirector<T extends AbstractDirectorRuntimeData> im
             this.maxAngleKey = null;
         }
     }
+
+    protected abstract void deserialize(Map<String, Object> rawData);
 
     @Override
     public @NotNull Map<String, Object> serialize() {
@@ -141,7 +145,7 @@ public abstract class AbstractDirector<T extends AbstractDirectorRuntimeData> im
         }
         this.applyVelocity(craft, entity, direction);
 
-        return false;
+        return true;
     }
 
     public boolean allowedOnCraft(@NotNull Craft craft) {
