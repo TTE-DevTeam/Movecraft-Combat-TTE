@@ -1,6 +1,7 @@
 package net.countercraft.movecraft.combat.features.directors;
 
 import net.countercraft.movecraft.combat.utils.DirectorUtils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Mob;
@@ -48,6 +49,13 @@ public class LivingEntityDirector implements IDirectorObject {
             }
         }
         return result;
+    }
+
+    @Override
+    public void sendMessage(Component message) {
+        if (this.entityReference.get() != null) {
+            this.entityReference.get().sendMessage(message);
+        }
     }
 
     @Override
