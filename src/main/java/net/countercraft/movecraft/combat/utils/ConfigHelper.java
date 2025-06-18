@@ -15,6 +15,15 @@ public class ConfigHelper {
         return result;
     }
 
+    public static String readString(Map<String, Object> args, String key, String defaultValue) {
+        Object obj = args.getOrDefault(key, defaultValue);
+        String result = defaultValue;
+        if (obj != null && (obj instanceof String)) {
+            result = (String) obj;
+        }
+        return result;
+    }
+
     public static NamespacedKey readNamespacedKey(Map<String, Object> args, String key, NamespacedKey defaultValue) {
         Object obj = args.getOrDefault(key, defaultValue);
         NamespacedKey result = defaultValue;
