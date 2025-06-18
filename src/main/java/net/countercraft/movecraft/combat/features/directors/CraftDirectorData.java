@@ -49,6 +49,35 @@ public class CraftDirectorData {
         return false;
     }
 
+    public boolean addDirector(final AbstractDirector directorInstance, final IDirectorObject directorObject, String... args) {
+        // First: Reset the director
+        if (!removeDirector(directorObject, args)) {
+            return false;
+        }
+        // If that worked, set it again!
+        AbstractDirectorRuntimeData runtimeData = this.getRunTimeData(directorInstance);
+        if (runtimeData != null) {
+            if (runtimeData.addDirector(directorObject, args)) {
+                // TODO: Send director message!
+                //directorObject.sendMessage();
+            }
+        }
+
+        return false;
+    }
+
+    public boolean removeDirector(final IDirectorObject directorObject, String... args) {
+        for (AbstractDirectorRuntimeData runtimeData : this.DIRECTOR_DATA.values()) {
+            if (!runtimeData.removeDirector(directorObject)) {
+                // NO value was removed, can be ignored
+            } else {
+                // TODO: Send director message!
+                //directorObject.sendMessage();
+            }
+        }
+        return true;
+    }
+
     public boolean attemptDirectEntity(Entity entity) {
         if (this.craftReference.get() == null) {
             return false;
