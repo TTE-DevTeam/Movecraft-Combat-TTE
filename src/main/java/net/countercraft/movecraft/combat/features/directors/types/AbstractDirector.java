@@ -2,6 +2,7 @@ package net.countercraft.movecraft.combat.features.directors.types;
 
 import net.countercraft.movecraft.combat.features.directors.types.data.AbstractDirectorRuntimeData;
 import net.countercraft.movecraft.combat.features.directors.types.sign.AbstractDirectorSign;
+import net.countercraft.movecraft.combat.features.directors.types.sign.SimpleDirectorSign;
 import net.countercraft.movecraft.combat.utils.ConfigHelper;
 import net.countercraft.movecraft.combat.utils.DirectorUtils;
 import net.countercraft.movecraft.combat.utils.MathHelper;
@@ -37,6 +38,8 @@ public abstract class AbstractDirector<T extends AbstractDirectorRuntimeData> im
     protected final double maxAngle;
     protected final int convergenceDistance;
 
+    protected final String signHeaderIdent;
+
     public AbstractDirector(Map<String, Object> rawData) {
         this.priority = NumberConversions.toInt(rawData.getOrDefault("Priority", 1));
         this.ident = ConfigHelper.readString(rawData, "Ident", null);
@@ -52,6 +55,8 @@ public abstract class AbstractDirector<T extends AbstractDirectorRuntimeData> im
         this.velocityModifier = NumberConversions.toDouble(rawData.getOrDefault("VelocityMultiplier", 1.0));
         this.maxAngle = NumberConversions.toDouble(rawData.getOrDefault("MaxDirectorAngle", 45.0));
         this.convergenceDistance = NumberConversions.toInt(rawData.getOrDefault("ConvergenceRange", -1));
+
+        this.signHeaderIdent = ConfigHelper.readString(rawData, "SignIdent", null);
 
         Object storedListObj = rawData.getOrDefault("EntityTypes", List.of());
         try {
@@ -171,7 +176,11 @@ public abstract class AbstractDirector<T extends AbstractDirectorRuntimeData> im
 
     @Nullable
     public AbstractDirectorSign createDirectorSignHandler() {
-        return null;
+        if (this.signHeaderIdent != null && !this.signHeaderIdent.isBlank()) {
+            return new SimpleDirectorSign(this.signHeaderIdent, this);
+        } else {
+            return null;
+        }
     }
 
     protected abstract Triple<String, NamespacedKey, Function<CraftType, Double>> getMaxAngleCraftTypeDoubleProperty();
