@@ -2,6 +2,7 @@ package net.countercraft.movecraft.combat.features.directors.types;
 
 import net.countercraft.movecraft.combat.features.directors.types.data.AbstractDirectorRuntimeData;
 import net.countercraft.movecraft.combat.features.directors.types.sign.AbstractDirectorSign;
+import net.countercraft.movecraft.combat.utils.ConfigHelper;
 import net.countercraft.movecraft.combat.utils.DirectorUtils;
 import net.countercraft.movecraft.combat.utils.MathHelper;
 import net.countercraft.movecraft.craft.Craft;
@@ -27,6 +28,7 @@ import java.util.function.Function;
 public abstract class AbstractDirector<T extends AbstractDirectorRuntimeData> implements ConfigurationSerializable, Comparable<AbstractDirector> {
 
     private final int priority;
+    private final String ident;
     private final Set<EntityType> ENTITY_TYPES = new HashSet<>();
     private final NamespacedKey allowedOnCraftKey;
     private final NamespacedKey maxAngleKey;
@@ -37,6 +39,10 @@ public abstract class AbstractDirector<T extends AbstractDirectorRuntimeData> im
 
     public AbstractDirector(Map<String, Object> rawData) {
         this.priority = NumberConversions.toInt(rawData.getOrDefault("Priority", 1));
+        this.ident = ConfigHelper.readString(rawData, "Ident", null);
+        if (this.ident == null) {
+            throw new IllegalArgumentException("Ident must not be null for director!");
+        }
         // Constructor necessary for object deserialization from config
 
         if (this.priority <= 0) {
