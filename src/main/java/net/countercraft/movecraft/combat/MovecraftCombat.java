@@ -38,9 +38,9 @@ public final class MovecraftCombat extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        AADirectors.register();
-        ArrowDirectors.register();
-        CannonDirectors.register();
+        //AADirectors.register();
+        //ArrowDirectors.register();
+        //CannonDirectors.register();
         MovementTracers.register();
     }
 
@@ -76,9 +76,9 @@ public final class MovecraftCombat extends JavaPlugin {
         CombatRelease.load(getConfig());
 
         Directors.load(getConfig());
-        AADirectors.load(getConfig());
-        ArrowDirectors.load(getConfig());
-        CannonDirectors.load(getConfig());
+        //AADirectors.load(getConfig());
+        //ArrowDirectors.load(getConfig());
+        //CannonDirectors.load(getConfig());
 
         MovementTracers.load(getConfig());
         TNTTracers.load(getConfig());
