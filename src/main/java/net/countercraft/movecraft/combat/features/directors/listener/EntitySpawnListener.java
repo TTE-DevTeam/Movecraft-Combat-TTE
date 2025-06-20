@@ -2,6 +2,7 @@ package net.countercraft.movecraft.combat.features.directors.listener;
 
 import de.dertoaster.extraevents.api.event.DispenserDispenseEntityEvent;
 import net.countercraft.movecraft.combat.features.directors.CraftDirectorData;
+import net.countercraft.movecraft.combat.features.directors.DirectorDataAccess;
 import net.countercraft.movecraft.combat.features.directors.DirectorHelper;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.util.MathUtils;
@@ -90,7 +91,11 @@ public class EntitySpawnListener implements Listener {
             return;
         }
         //Call the director event for the craft, rest is handled on the craft itself
-        CraftDirectorData.get(craft).attemptDirectEntity(event.getEntity());
+        DirectorDataAccess.setPreDirectionVelocity(event.getEntity(), event.getEntity().getVelocity().clone());
+        if (CraftDirectorData.get(craft).attemptDirectEntity(event.getEntity())) {
+            DirectorDataAccess.markDirectionPoint(event.getEntity());
+            DirectorHelper.flagProjectileAsDirected((Projectile) event.getEntity(), craft, false);
+        }
     }
 
 }
