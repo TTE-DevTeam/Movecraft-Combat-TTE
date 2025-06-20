@@ -2,7 +2,7 @@ package net.countercraft.movecraft.combat.features.directors;
 
 import net.countercraft.movecraft.combat.MovecraftCombat;
 import org.bukkit.NamespacedKey;
-import org.bukkit.entity.TNTPrimed;
+import org.bukkit.entity.Entity;
 import org.bukkit.persistence.PersistentDataAdapterContext;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.Vector;
@@ -17,33 +17,38 @@ public class DirectorDataAccess {
     static final NamespacedKey KEY_INITIAL_DIRECTION_TICK = new NamespacedKey(MovecraftCombat.getInstance(), "directors_direction_tick");
     static final NamespacedKey KEY_VELOCITY_PRE_DIRECT = new NamespacedKey(MovecraftCombat.getInstance(), "directors_velocity_before_direction");
 
-    public static boolean wasAlreadyDirected(final TNTPrimed tntPrimed) {
-        return tntPrimed.getPersistentDataContainer().getOrDefault(KEY_WAS_DIRECTED, PersistentDataType.BOOLEAN, false);
+    public static void markDirectionPoint(final Entity entity) {
+        entity.getPersistentDataContainer().set(KEY_WAS_DIRECTED, PersistentDataType.BOOLEAN, true);
+        entity.getPersistentDataContainer().set(KEY_INITIAL_DIRECTION_TICK, PersistentDataType.INTEGER, entity.getTicksLived());
     }
 
-    public static boolean wasDirectedInSameTick(final TNTPrimed tntPrimed) {
-        Optional<Long> initialTick = getTickOfDirection(tntPrimed);
+    public static boolean wasAlreadyDirected(final Entity entity) {
+        return entity.getPersistentDataContainer().getOrDefault(KEY_WAS_DIRECTED, PersistentDataType.BOOLEAN, false);
+    }
+
+    public static boolean wasDirectedInSameTick(final Entity entity) {
+        Optional<Integer> initialTick = getTickOfDirection(entity);
         if (initialTick.isEmpty()) {
             return false;
         }
-        return initialTick.get() == tntPrimed.getTicksLived();
+        return initialTick.get() == entity.getTicksLived();
     }
 
-    public static Optional<Long> getTickOfDirection(final TNTPrimed tntPrimed) {
-        return Optional.ofNullable(tntPrimed.getPersistentDataContainer().getOrDefault(KEY_INITIAL_DIRECTION_TICK, PersistentDataType.LONG, null));
+    public static Optional<Integer> getTickOfDirection(final Entity entity) {
+        return Optional.ofNullable(entity.getPersistentDataContainer().getOrDefault(KEY_INITIAL_DIRECTION_TICK, PersistentDataType.INTEGER, null));
     }
 
-    public static void setPreDirectionVelocity(final TNTPrimed tntPrimed, final Vector vector) {
-        tntPrimed.getPersistentDataContainer().set(KEY_VELOCITY_PRE_DIRECT, VECTOR_PERSISTENT_DATA_TYPE, vector);
+    public static void setPreDirectionVelocity(final Entity entity, final Vector vector) {
+        entity.getPersistentDataContainer().set(KEY_VELOCITY_PRE_DIRECT, VECTOR_PERSISTENT_DATA_TYPE, vector);
     }
 
-    public static Vector getPreDirectVelocity(final TNTPrimed tntPrimed) {
-        Optional<Vector> opt = getOptionalPreDirectVelocity(tntPrimed);
+    public static Vector getPreDirectVelocity(final Entity entity) {
+        Optional<Vector> opt = getOptionalPreDirectVelocity(entity);
         return opt.orElseGet(() -> new Vector(0,0,0));
     }
 
-    public static Optional<Vector> getOptionalPreDirectVelocity(final TNTPrimed tntPrimed) {
-        return Optional.ofNullable(tntPrimed.getPersistentDataContainer().getOrDefault(KEY_VELOCITY_PRE_DIRECT, VECTOR_PERSISTENT_DATA_TYPE, null));
+    public static Optional<Vector> getOptionalPreDirectVelocity(final Entity entity) {
+        return Optional.ofNullable(entity.getPersistentDataContainer().getOrDefault(KEY_VELOCITY_PRE_DIRECT, VECTOR_PERSISTENT_DATA_TYPE, null));
     }
 
     public static final PersistentDataType<byte[], Vector> VECTOR_PERSISTENT_DATA_TYPE = new VectorPersistentDataType();
