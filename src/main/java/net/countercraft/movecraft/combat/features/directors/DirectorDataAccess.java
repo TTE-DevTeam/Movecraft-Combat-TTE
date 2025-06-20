@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import java.nio.ByteBuffer;
 import java.util.Optional;
 
-public class TNTDirectorDataAccess {
+public class DirectorDataAccess {
 
     static final NamespacedKey KEY_WAS_DIRECTED = new NamespacedKey(MovecraftCombat.getInstance(), "directors_was_directed");
     static final NamespacedKey KEY_INITIAL_DIRECTION_TICK = new NamespacedKey(MovecraftCombat.getInstance(), "directors_direction_tick");
