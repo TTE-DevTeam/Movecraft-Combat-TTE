@@ -1,13 +1,10 @@
 package net.countercraft.movecraft.combat.features.directors.listener;
 
 import de.dertoaster.extraevents.api.event.ExplosionPropellProjectileEvent;
-import de.dertoaster.extraevents.api.event.ExplosionPropellTNTEvent;
 import net.countercraft.movecraft.combat.features.directors.CraftDirectorData;
 import net.countercraft.movecraft.combat.features.directors.DirectorDataAccess;
 import net.countercraft.movecraft.combat.features.directors.DirectorHelper;
-import net.countercraft.movecraft.combat.features.directors.TNTDirectorDataAccess;
 import net.countercraft.movecraft.craft.Craft;
-import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.util.MathUtils;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Projectile;
