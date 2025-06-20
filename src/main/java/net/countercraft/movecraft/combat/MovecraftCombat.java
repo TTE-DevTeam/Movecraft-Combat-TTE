@@ -6,6 +6,10 @@ import net.countercraft.movecraft.combat.features.directors.AADirectors;
 import net.countercraft.movecraft.combat.features.directors.ArrowDirectors;
 import net.countercraft.movecraft.combat.features.directors.CannonDirectors;
 import net.countercraft.movecraft.combat.features.directors.Directors;
+import net.countercraft.movecraft.combat.features.directors.listener.CraftPilotListener;
+import net.countercraft.movecraft.combat.features.directors.listener.EntitySpawnListener;
+import net.countercraft.movecraft.combat.features.directors.listener.ProjectilePropellListener;
+import net.countercraft.movecraft.combat.features.directors.listener.TNTPropellListener;
 import net.countercraft.movecraft.combat.features.directors.types.MultiUserProjectileDirector;
 import net.countercraft.movecraft.combat.features.directors.types.MultiUserTNTDirector;
 import net.countercraft.movecraft.combat.features.directors.types.SingleUserProjectileDirector;
@@ -97,6 +101,12 @@ public final class MovecraftCombat extends JavaPlugin {
         // Register event translation listeners
         getServer().getPluginManager().registerEvents(new CraftCollisionExplosionListener(), this);
         getServer().getPluginManager().registerEvents(new ExplosionListener(), this);
+
+        // Director rework listeners
+        getServer().getPluginManager().registerEvents(new CraftPilotListener(), this);
+        getServer().getPluginManager().registerEvents(new EntitySpawnListener(), this);
+        getServer().getPluginManager().registerEvents(new ProjectilePropellListener(), this);
+        getServer().getPluginManager().registerEvents(new TNTPropellListener(), this);
 
         // Register features
         var combatRelease = new CombatRelease();
