@@ -6,19 +6,27 @@ import net.countercraft.movecraft.combat.features.directors.AADirectors;
 import net.countercraft.movecraft.combat.features.directors.ArrowDirectors;
 import net.countercraft.movecraft.combat.features.directors.CannonDirectors;
 import net.countercraft.movecraft.combat.features.directors.Directors;
+import net.countercraft.movecraft.combat.features.directors.listener.CraftPilotListener;
+import net.countercraft.movecraft.combat.features.directors.listener.EntitySpawnListener;
+import net.countercraft.movecraft.combat.features.directors.listener.ProjectilePropellListener;
+import net.countercraft.movecraft.combat.features.directors.listener.TNTPropellListener;
+import net.countercraft.movecraft.combat.features.directors.types.MultiUserProjectileDirector;
+import net.countercraft.movecraft.combat.features.directors.types.MultiUserTNTDirector;
+import net.countercraft.movecraft.combat.features.directors.types.SingleUserProjectileDirector;
+import net.countercraft.movecraft.combat.features.directors.types.SingleUserTNTDirector;
 import net.countercraft.movecraft.combat.features.tracers.MovementTracers;
 import net.countercraft.movecraft.combat.features.tracers.TNTTracers;
 import net.countercraft.movecraft.combat.features.tracers.commands.MovementTracerSettingCommand;
 import net.countercraft.movecraft.combat.features.tracers.commands.TNTTracerModeCommand;
 import net.countercraft.movecraft.combat.features.tracers.commands.TNTTracerSettingCommand;
 import net.countercraft.movecraft.combat.features.tracers.config.PlayerManager;
-import net.countercraft.movecraft.combat.features.BlockBehaviorOverride;
 import net.countercraft.movecraft.combat.features.tracking.DamageTracking;
 import net.countercraft.movecraft.combat.features.tracking.FireballTracking;
 import net.countercraft.movecraft.combat.features.tracking.TNTTracking;
 import net.countercraft.movecraft.combat.listener.CraftCollisionExplosionListener;
 import net.countercraft.movecraft.combat.listener.ExplosionListener;
 import net.countercraft.movecraft.combat.localisation.I18nSupport;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -34,9 +42,9 @@ public final class MovecraftCombat extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        AADirectors.register();
-        ArrowDirectors.register();
-        CannonDirectors.register();
+        //AADirectors.register();
+        //ArrowDirectors.register();
+        //CannonDirectors.register();
         MovementTracers.register();
     }
 
@@ -44,6 +52,10 @@ public final class MovecraftCombat extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
+        ConfigurationSerialization.registerClass(SingleUserProjectileDirector.class, "SingleUserProjectileDirector");
+        ConfigurationSerialization.registerClass(MultiUserProjectileDirector.class, "MultiUserProjectileDirector");
+        ConfigurationSerialization.registerClass(SingleUserTNTDirector.class, "SingleUserTNTDirector");
+        ConfigurationSerialization.registerClass(MultiUserTNTDirector.class, "MultiUserTNTDirector");
 
         // Save default config, create default userdata and language if needed
         saveDefaultConfig();
@@ -68,9 +80,9 @@ public final class MovecraftCombat extends JavaPlugin {
         CombatRelease.load(getConfig());
 
         Directors.load(getConfig());
-        AADirectors.load(getConfig());
-        ArrowDirectors.load(getConfig());
-        CannonDirectors.load(getConfig());
+        //AADirectors.load(getConfig());
+        //ArrowDirectors.load(getConfig());
+        //CannonDirectors.load(getConfig());
 
         MovementTracers.load(getConfig());
         TNTTracers.load(getConfig());
@@ -89,6 +101,12 @@ public final class MovecraftCombat extends JavaPlugin {
         // Register event translation listeners
         getServer().getPluginManager().registerEvents(new CraftCollisionExplosionListener(), this);
         getServer().getPluginManager().registerEvents(new ExplosionListener(), this);
+
+        // Director rework listeners
+        getServer().getPluginManager().registerEvents(new CraftPilotListener(), this);
+        getServer().getPluginManager().registerEvents(new EntitySpawnListener(), this);
+        getServer().getPluginManager().registerEvents(new ProjectilePropellListener(), this);
+        getServer().getPluginManager().registerEvents(new TNTPropellListener(), this);
 
         // Register features
         var combatRelease = new CombatRelease();
@@ -122,7 +140,6 @@ public final class MovecraftCombat extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new AntiRadar(), this);
         var contactExplosives = new ContactExplosives();
         getServer().getPluginManager().registerEvents(contactExplosives, this);
-        contactExplosives.runTaskTimer(this, 0, 1); // Every tick
         getServer().getPluginManager().registerEvents(new DurabilityOverride(), this);
         var fireballLifespan = new FireballLifespan();
         getServer().getPluginManager().registerEvents(fireballLifespan, this);

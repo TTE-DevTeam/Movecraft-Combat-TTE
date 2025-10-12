@@ -5,8 +5,11 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.util.BlockIterator;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,10 +50,32 @@ public class DirectorUtils {
         return (int) finalDistance; // casting to an int will floor the result, giving us a bit of safety.
     }
 
+    public static Vector limitVectorToMaxAngle(final Vector targetVector, final Vector originalVector, final double maxAngleInRadian) {
+        // Special case for when the aiming direction is to the opposite side, in that case, return the input vector
+        // The originalVector is the normal of a plane. If out targetVector points to behind that plane (contrary to the normal), we are facing away from it
+        final double dotProduct = targetVector.clone().normalize().dot(originalVector.clone().normalize());
+        if (dotProduct < 0) {
+            // We are facing away from the plane, we return what was put in
+            return originalVector.clone();
+        }
+        // Limit the vector to a certain angle
+        final double maxAngle = Math.cos(maxAngleInRadian);
+        // we need to limit
+        if (dotProduct < maxAngle) {
+            // Step 1: Normalize the target vector (the direction we are aiming at) and the original vector => Already the case
+            // Step 2: Create perpendicular vector in the same plane as both vectors
+            final Vector perpendicularVector = targetVector.clone().subtract(originalVector.clone().multiply(dotProduct)).normalize();
+            // Step 3: Obtain the correct, limited vector
+            return originalVector.clone().add(perpendicularVector.multiply(Math.tan(maxAngleInRadian))).normalize();
+        } else {
+            // All good, we can use it as we wanted to
+            return targetVector.clone();
+        }
+    }
 
     @Nullable
-    public static Block getDirectorBlock(@NotNull Player player, int range) {
-        Iterator<Block> itr = new BlockIterator(player, Math.min(range, distanceToRender(player.getLocation())));
+    public static Block getDirectorBlock(@NotNull LivingEntity entity, int range) {
+        Iterator<Block> itr = new BlockIterator(entity.getEyeLocation(), Math.min(range, distanceToRender(entity.getLocation())));
         while (itr.hasNext()) {
             Block block = itr.next();
             Material material = block.getType();

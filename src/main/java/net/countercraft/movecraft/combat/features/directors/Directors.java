@@ -2,23 +2,35 @@ package net.countercraft.movecraft.combat.features.directors;
 
 import com.google.common.collect.HashBiMap;
 import net.countercraft.movecraft.combat.MovecraftCombat;
+import net.countercraft.movecraft.combat.features.directors.types.AbstractDirector;
+import net.countercraft.movecraft.combat.features.directors.types.sign.AbstractDirectorSign;
 import net.countercraft.movecraft.craft.PlayerCraft;
+import net.countercraft.movecraft.craft.datatag.CraftDataTagKey;
+import net.countercraft.movecraft.craft.datatag.CraftDataTagRegistry;
+import net.countercraft.movecraft.sign.AbstractCraftSign;
+import net.countercraft.movecraft.sign.MovecraftSignRegistry;
 import net.countercraft.movecraft.util.Tags;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class Directors extends BukkitRunnable {
     private static final Set<Directors> instances = new HashSet<>();
     public static Material DirectorTool = null;
     public static Set<Material> Transparent = null;
     private final HashBiMap<PlayerCraft, Player> directors = HashBiMap.create();
+
+    public static List<AbstractDirector> CONFIGURED_DIRECTORS = List.of();
+    public static Map<EntityType, List<AbstractDirector>> DIRECTORS_PER_TYPE = new WeakHashMap<>();
+
+    public static CraftDataTagKey<CraftDirectorData> DATA_TAG_KEY_DIRECTOR_DATA = CraftDataTagRegistry.INSTANCE.registerTagKey(new NamespacedKey(MovecraftCombat.getInstance(), "director-data"), CraftDirectorData::new);
 
 
     public Directors() {
@@ -52,6 +64,29 @@ public class Directors extends BukkitRunnable {
             else {
                 MovecraftCombat.getInstance().getLogger().severe("Failed to load transparent " + o.toString());
             }
+        }
+
+        try {
+            List<? extends AbstractDirector> directorList = (List<? extends AbstractDirector>) config.getList("Directors", List.of());
+            directorList.sort(Comparator.naturalOrder());
+            for (AbstractDirector adTmp : directorList) {
+                CONFIGURED_DIRECTORS.add(adTmp);
+
+                for (EntityType type : adTmp.getEntityTypes()) {
+                    DIRECTORS_PER_TYPE.computeIfAbsent(type, k -> new ArrayList<>()).add(adTmp);
+                }
+
+                adTmp.registerCraftTypeProperties();
+                AbstractDirectorSign directorSign = adTmp.createDirectorSignHandler();
+                if (directorSign != null && directorSign.getSignIdent() != null && !directorSign.getSignIdent().isBlank()) {
+                    MovecraftSignRegistry.INSTANCE.register(directorSign.getSignIdent(), directorSign, true);
+                }
+            }
+            for (List<AbstractDirector> list : DIRECTORS_PER_TYPE.values()) {
+                list.sort(Comparator.naturalOrder());
+            }
+        } catch(Exception ex) {
+            MovecraftCombat.getInstance().getLogger().severe("Unable to load Directors config section!");
         }
     }
 

@@ -1,8 +1,10 @@
 plugins {
     `java-library`
     `maven-publish`
-    id("io.github.apdevteam.github-packages") version "1.2.2"
-    id("io.papermc.hangar-publish-plugin") version "0.1.3"
+    id("io.github.0ffz.github-packages") version "1.2.1"
+    id("io.papermc.hangar-publish-plugin") version "0.1.2"
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.13"
+    id("io.github.goooler.shadow") version "8.1.7"
 }
 
 repositories {
@@ -10,19 +12,43 @@ repositories {
     mavenLocal()
     mavenCentral()
     maven("https://repo.papermc.io/repository/maven-public/")
-    maven { githubPackage("apdevteam/movecraft")(this) }
+
+    ivy {
+        name="Github Releases" // GitHub Releases
+        url=uri("https://github.com")
+
+        patternLayout {
+            artifact("[organisation]/[module]/releases/download/MC[revision]/[module]-[revision].[ext]")
+        }
+
+        metadataSources { artifact() }
+    }
+
+    ivy {
+        name="Github Releases" // GitHub Releases (ExtraEvents API)
+        url=uri("https://github.com")
+
+        patternLayout {
+            artifact("[organisation]/[module]/releases/download/[revision]/[module]-api-[revision].[ext]")
+        }
+
+        metadataSources { artifact() }
+    }
 }
 
 dependencies {
-    api("org.jetbrains:annotations-java5:24.1.0")
-    compileOnly("io.papermc.paper:paper-api:1.20.6-R0.1-SNAPSHOT")
-    compileOnly("net.countercraft:movecraft:+")
-    compileOnly("it.unimi.dsi:fastutil:8.5.13")
+    annotationProcessor("org.jetbrains:annotations-java5:24.1.0")
+    paperweight.paperDevBundle("1.21.4-R0.1-SNAPSHOT")
+    compileOnly("TTE-DevTeam:Movecraft:1.21.x-8.5.1-TTE@jar")
+    compileOnly("it.unimi.dsi:fastutil:8.5.11")
+    api("TTE-DevTeam:extraevents:1.3.0@jar")
 }
 
+paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArtifactConfiguration.MOJANG_PRODUCTION
+
 group = "net.countercraft.movecraft.combat"
-version = "2.0.0_beta-7"
-description = "Movecraft-Combat"
+version = "2.2.2"
+description = "Movecraft-Combat-TTE"
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 tasks.jar {
@@ -69,7 +95,9 @@ hangarPublish {
         platforms {
             register(io.papermc.hangarpublishplugin.model.Platforms.PAPER) {
                 jar.set(tasks.jar.flatMap { it.archiveFile })
-                platformVersions.set(listOf("1.20.6-1.21.5"))
+                
+                platformVersions.set(listOf("1.21.1-1.21.4"))
+
                 dependencies {
                     hangar("Movecraft") {
                         required.set(true)
