@@ -1,8 +1,8 @@
 plugins {
     `java-library`
     `maven-publish`
-    id("io.github.0ffz.github-packages") version "1.2.1"
-    id("io.papermc.hangar-publish-plugin") version "0.1.2"
+    id("io.github.apdevteam.github-packages") version "1.2.2"
+    id("io.papermc.hangar-publish-plugin") version "0.1.3"
     id("io.papermc.paperweight.userdev") version "2.0.0-beta.13"
     id("io.github.goooler.shadow") version "8.1.7"
 }
@@ -40,7 +40,7 @@ dependencies {
     annotationProcessor("org.jetbrains:annotations-java5:24.1.0")
     paperweight.paperDevBundle("1.21.4-R0.1-SNAPSHOT")
     compileOnly("TTE-DevTeam:Movecraft:1.21.x-8.5.1-TTE@jar")
-    compileOnly("it.unimi.dsi:fastutil:8.5.11")
+    compileOnly("it.unimi.dsi:fastutil:8.5.13")
     api("TTE-DevTeam:extraevents:1.3.0@jar")
 }
 
@@ -50,7 +50,6 @@ group = "net.countercraft.movecraft.combat"
 version = "2.2.2"
 description = "Movecraft-Combat-TTE"
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
-
 
 tasks.jar {
     archiveBaseName.set("Movecraft-Combat")
@@ -96,7 +95,9 @@ hangarPublish {
         platforms {
             register(io.papermc.hangarpublishplugin.model.Platforms.PAPER) {
                 jar.set(tasks.jar.flatMap { it.archiveFile })
+                
                 platformVersions.set(listOf("1.21.1-1.21.4"))
+
                 dependencies {
                     hangar("Movecraft") {
                         required.set(true)
