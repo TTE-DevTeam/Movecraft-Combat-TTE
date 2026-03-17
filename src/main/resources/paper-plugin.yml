@@ -10,7 +10,7 @@ website: https://github.com/TTE-DevTeam/Movecraft-Combat-TTE
 bootstrapper: net.countercraft.movecraft.combat.MovecraftCombatBootstrapper
 dependencies:
   server:
-    Movecraft:
+    Windfarer:
       load: BEFORE
       required: true
       join-classpath: true
