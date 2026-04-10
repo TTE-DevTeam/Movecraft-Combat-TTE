@@ -1,13 +1,8 @@
 package net.countercraft.movecraft.combat.features.directors.types.sign;
 
-import net.countercraft.movecraft.combat.features.directors.CraftDirectorData;
-import net.countercraft.movecraft.combat.features.directors.DirectorHelper;
-import net.countercraft.movecraft.combat.features.directors.Directors;
-import net.countercraft.movecraft.combat.features.directors.LivingEntityDirector;
 import net.countercraft.movecraft.combat.features.directors.types.AbstractDirector;
 import net.countercraft.movecraft.combat.features.directors.types.AbstractMultiUserDirector;
 import net.countercraft.movecraft.craft.Craft;
-import net.countercraft.movecraft.sign.AbstractCraftSign;
 import net.countercraft.movecraft.sign.AbstractToggleSign;
 import net.countercraft.movecraft.sign.SignListener;
 import net.kyori.adventure.text.Component;
@@ -61,8 +56,8 @@ public abstract class AbstractDirectorSign extends AbstractToggleSign {
     }
 
     @Override
-    protected boolean shouldShareSameToggleState(SignListener.SignWrapper sign, SignListener.SignWrapper other) {
-        boolean result = super.shouldShareSameToggleState(sign, other);
+    protected boolean shouldShareSameToggleState(SignListener.SignWrapper sign, SignListener.SignWrapper other, Craft craft) {
+        boolean result = super.shouldShareSameToggleState(sign, other, craft);
         // For nodal or multiuser directors, compare the node ident too!
         if (result && this.associatedDirector instanceof AbstractMultiUserDirector) {
             result = sign.getRaw(1).equalsIgnoreCase(other.getRaw(1));
