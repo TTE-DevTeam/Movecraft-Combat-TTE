@@ -8,9 +8,9 @@ import net.countercraft.movecraft.combat.utils.MathHelper;
 import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.craft.PlayerCraft;
-import net.countercraft.movecraft.craft.type.CraftType;
-import net.countercraft.movecraft.craft.type.property.BooleanProperty;
-import net.countercraft.movecraft.craft.type.property.DoubleProperty;
+import net.countercraft.movecraft.craft.type.PropertyKey;
+import net.countercraft.movecraft.craft.type.PropertyKeyTypes;
+import net.countercraft.movecraft.craft.type.TypeSafeCraftType;
 import net.countercraft.movecraft.util.MathUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -30,8 +30,10 @@ import static net.countercraft.movecraft.util.ChatUtils.ERROR_PREFIX;
 
 @Deprecated(forRemoval = true)
 public class ArrowDirectors extends Directors implements Listener {
-    public static final NamespacedKey ALLOW_ARROW_DIRECTOR_SIGN = new NamespacedKey("movecraft-combat", "allow_arrow_director_sign");
-    public static final NamespacedKey MAX_ARROW_DIRECTOR_ANGLE = new NamespacedKey("movecraft-combat", "max_arrow_director_angle");
+    private static final NamespacedKey ALLOW_ARROW_DIRECTOR_SIGN = new NamespacedKey("movecraft-combat", "allow_arrow_director_sign");
+    private static final NamespacedKey MAX_ARROW_DIRECTOR_ANGLE = new NamespacedKey("movecraft-combat", "max_arrow_director_angle");
+    public static PropertyKey<Boolean> ALLOW_ARROW_DIRECTOR_PROPERTY = PropertyKeyTypes.boolPropertyKey(ALLOW_ARROW_DIRECTOR_SIGN, true);
+    public static PropertyKey<Double> MAX_ARROW_DIRECTOR_ANGLE_PROPERTY = PropertyKeyTypes.doublePropertyKey(MAX_ARROW_DIRECTOR_ANGLE, 45.0d);
     private static final String HEADER = "Arrow Director";
     public static int ArrowDirectorDistance = 50;
     public static int ArrowDirectorRange = 120;
@@ -42,8 +44,8 @@ public class ArrowDirectors extends Directors implements Listener {
     }
 
     public static void register() {
-        CraftType.registerProperty(new BooleanProperty("allowArrowDirectorSign", ALLOW_ARROW_DIRECTOR_SIGN, type -> true));
-        CraftType.registerProperty(new DoubleProperty("maxArrowDirectorAngle", MAX_ARROW_DIRECTOR_ANGLE, type -> 45.0D));
+        ALLOW_ARROW_DIRECTOR_PROPERTY = TypeSafeCraftType.PROPERTY_REGISTRY.register(ALLOW_ARROW_DIRECTOR_SIGN, ALLOW_ARROW_DIRECTOR_PROPERTY, false);
+        MAX_ARROW_DIRECTOR_ANGLE_PROPERTY = TypeSafeCraftType.PROPERTY_REGISTRY.register(MAX_ARROW_DIRECTOR_ANGLE, MAX_ARROW_DIRECTOR_ANGLE_PROPERTY, false);
     }
 
     public static void load(@NotNull FileConfiguration config) {
@@ -111,7 +113,7 @@ public class ArrowDirectors extends Directors implements Listener {
         }
 
         // Limit the vector to a certain angle
-        final double angleValueRad = Math.toRadians(c.getType().getDoubleProperty(MAX_ARROW_DIRECTOR_ANGLE));
+        final double angleValueRad = Math.toRadians(c.getCraftProperties().get(MAX_ARROW_DIRECTOR_ANGLE_PROPERTY));
         arrowVector = DirectorUtils.limitVectorToMaxAngle(targetVector, arrowVector, angleValueRad);
 
         arrowVector = arrowVector.multiply(speed); // put the original speed back in, but now along a different trajectory
@@ -161,7 +163,7 @@ public class ArrowDirectors extends Directors implements Listener {
             return;
         }
 
-        if (!foundCraft.getType().getBoolProperty(ALLOW_ARROW_DIRECTOR_SIGN)) {
+        if (!foundCraft.getCraftProperties().get(ALLOW_ARROW_DIRECTOR_PROPERTY)) {
             p.sendMessage(ERROR_PREFIX + " " + I18nSupport.getInternationalisedString("ArrowDirector - Not Allowed On Craft"));
             return;
         }

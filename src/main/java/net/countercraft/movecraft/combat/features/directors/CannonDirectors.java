@@ -11,9 +11,9 @@ import net.countercraft.movecraft.craft.Craft;
 import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.craft.PlayerCraft;
 import net.countercraft.movecraft.craft.SinkingCraft;
-import net.countercraft.movecraft.craft.type.CraftType;
-import net.countercraft.movecraft.craft.type.property.BooleanProperty;
-import net.countercraft.movecraft.craft.type.property.DoubleProperty;
+import net.countercraft.movecraft.craft.type.PropertyKey;
+import net.countercraft.movecraft.craft.type.PropertyKeyTypes;
+import net.countercraft.movecraft.craft.type.TypeSafeCraftType;
 import net.countercraft.movecraft.util.MathUtils;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -39,8 +39,10 @@ import static net.countercraft.movecraft.util.ChatUtils.ERROR_PREFIX;
 
 @Deprecated(forRemoval = true)
 public class CannonDirectors extends Directors implements Listener {
-    public static final NamespacedKey ALLOW_CANNON_DIRECTOR_SIGN = new NamespacedKey("movecraft-combat", "allow_cannon_director_sign");
-    public static final NamespacedKey MAX_CANNON_DIRECTOR_ANGLE = new NamespacedKey("movecraft-combat", "max_cannon_director_angle");
+    private static final NamespacedKey ALLOW_CANNON_DIRECTOR_SIGN = new NamespacedKey("movecraft-combat", "allow_cannon_director_sign");
+    private static final NamespacedKey MAX_CANNON_DIRECTOR_ANGLE = new NamespacedKey("movecraft-combat", "max_cannon_director_angle");
+    public static PropertyKey<Boolean> ALLOW_CANNON_DIRECTOR_PROPERTY = PropertyKeyTypes.boolPropertyKey(ALLOW_CANNON_DIRECTOR_SIGN, true);
+    public static PropertyKey<Double> MAX_CANNON_DIRECTOR_ANGLE_PROPERTY = PropertyKeyTypes.doublePropertyKey(MAX_CANNON_DIRECTOR_ANGLE, 60.0d);
     private static final String HEADER = "Cannon Director";
     public static int CannonDirectorDistance = 100;
     public static int CannonDirectorRange = 120;
@@ -53,8 +55,8 @@ public class CannonDirectors extends Directors implements Listener {
     }
 
     public static void register() {
-        CraftType.registerProperty(new BooleanProperty("allowCannonDirectorSign", ALLOW_CANNON_DIRECTOR_SIGN, type -> true));
-        CraftType.registerProperty(new DoubleProperty("maxCannonDirectorAngle", MAX_CANNON_DIRECTOR_ANGLE, type -> 60.0D));
+        ALLOW_CANNON_DIRECTOR_PROPERTY = TypeSafeCraftType.PROPERTY_REGISTRY.register(ALLOW_CANNON_DIRECTOR_SIGN, ALLOW_CANNON_DIRECTOR_PROPERTY, false);
+        MAX_CANNON_DIRECTOR_ANGLE_PROPERTY = TypeSafeCraftType.PROPERTY_REGISTRY.register(MAX_CANNON_DIRECTOR_ANGLE, MAX_CANNON_DIRECTOR_ANGLE_PROPERTY, false);
     }
 
     public static void load(@NotNull FileConfiguration config) {
@@ -138,7 +140,7 @@ public class CannonDirectors extends Directors implements Listener {
         targetVector = (new Vector(targetVector.getX(), 0, targetVector.getZ())).normalize();
 
         // Limit the vector to a certain angle
-        final double angleValueRad = Math.toRadians(c.getType().getDoubleProperty(MAX_CANNON_DIRECTOR_ANGLE));
+        final double angleValueRad = Math.toRadians(c.getCraftProperties().get(MAX_CANNON_DIRECTOR_ANGLE_PROPERTY));
         tntVector = DirectorUtils.limitVectorToMaxAngle(targetVector, tntVector, angleValueRad);
 
         tntVector = tntVector.multiply(horizontalSpeed); // put the original speed back in, but now along a different trajectory
@@ -210,7 +212,7 @@ public class CannonDirectors extends Directors implements Listener {
             return;
         }
 
-        if (!foundCraft.getType().getBoolProperty(ALLOW_CANNON_DIRECTOR_SIGN)) {
+        if (!foundCraft.getCraftProperties().get(ALLOW_CANNON_DIRECTOR_PROPERTY)) {
             p.sendMessage(ERROR_PREFIX + " " + I18nSupport.getInternationalisedString("CannonDirector - Not Allowed On Craft"));
             return;
         }

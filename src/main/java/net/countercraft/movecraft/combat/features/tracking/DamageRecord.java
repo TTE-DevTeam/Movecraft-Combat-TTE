@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class DamageRecord {
     private final OfflinePlayer cause;
+    // TODO: Switch to entity?
     private final OfflinePlayer damaged;
     private final Type type;
     private final long time;

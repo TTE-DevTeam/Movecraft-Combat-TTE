@@ -6,6 +6,7 @@ import net.countercraft.movecraft.combat.utils.NameUtils;
 import net.countercraft.movecraft.craft.PlayerCraft;
 import net.countercraft.movecraft.events.CraftEvent;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -54,7 +55,8 @@ public class CraftSunkByEvent extends CraftEvent {
         players.remove(latestDamage.getCause());
 
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(((PlayerCraft) this.craft).getPilot().getDisplayName());
+        Player pilot = ((PlayerCraft) this.craft).getPilotPlayer();
+        stringBuilder.append(pilot != null ? pilot.getDisplayName() : ((PlayerCraft)this.craft).getPilotUUID().toString());
         stringBuilder.append(" ").append(I18nSupport.getInternationalisedString("Killfeed - Sunk By")).append(" ");
         stringBuilder.append(NameUtils.offlineToName(latestDamage.getCause()));
         if (players.size() < 1)

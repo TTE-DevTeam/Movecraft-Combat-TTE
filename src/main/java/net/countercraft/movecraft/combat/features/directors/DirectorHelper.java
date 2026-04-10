@@ -65,7 +65,7 @@ public class DirectorHelper {
             return;
         }
         // TODO: Refactor to new system!
-        if (!craft.getType().getBoolProperty(CannonDirectors.ALLOW_CANNON_DIRECTOR_SIGN)) {
+        if (!craft.getCraftProperties().get(CannonDirectors.ALLOW_CANNON_DIRECTOR_PROPERTY)) {
             return;
         }
         if (isTNTFlaggedForDirection(tntPrimed)) {

@@ -38,6 +38,9 @@ public class FireballTracking implements Listener {
     }
 
     public void damagedCraft(@NotNull PlayerCraft craft, @NotNull org.bukkit.entity.Fireball fireball) {
+        if (craft.getPilotPlayer() == null) {
+            return;
+        }
         List<MetadataValue> meta = fireball.getMetadata("MCC-Sender");
         if (meta.isEmpty())
             return;
@@ -47,7 +50,7 @@ public class FireballTracking implements Listener {
         if (cause == null || !cause.isOnline())
             return;
 
-        DamageRecord damageRecord = new DamageRecord(cause, craft.getPilot(), new Fireball());
+        DamageRecord damageRecord = new DamageRecord(cause, craft.getPilotPlayer(), new Fireball());
         Bukkit.getPluginManager().callEvent(new CraftDamagedByEvent(craft, damageRecord));
     }
 
@@ -72,7 +75,7 @@ public class FireballTracking implements Listener {
         if (directors.hasDirector(playerCraft))
             sender = directors.getDirector(playerCraft);
         else
-            sender = playerCraft.getPilot();
+            sender = playerCraft.getPilotPlayer();
         if (sender == null)
             return;
 

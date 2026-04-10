@@ -84,7 +84,10 @@ public class AntiRadar implements Listener {
         if (!(c instanceof PlayerCraft))
             return;
 
-        Player p = ((PlayerCraft) c).getPilot();
+        Player p = ((PlayerCraft) c).getPilotPlayer();
+        if (p == null) {
+            return;
+        }
         startPilot(p);
         if (MathUtils.locIsNearCraftFast(c, MathUtils.bukkit2MovecraftLoc(p.getLocation())))
             startInvisible(p);
@@ -98,7 +101,10 @@ public class AntiRadar implements Listener {
         if (!(e.getCraft() instanceof PlayerCraft))
             return;
 
-        Player p = ((PlayerCraft) e.getCraft()).getPilot();
+        Player p = ((PlayerCraft) e.getCraft()).getPilotPlayer();
+        if (p == null) {
+            return;
+        }
         endPilot(p);
         endInvisible(p);
     }
@@ -111,7 +117,10 @@ public class AntiRadar implements Listener {
         if (!(e.getCraft() instanceof PlayerCraft))
             return;
 
-        Player p = ((PlayerCraft) e.getCraft()).getPilot();
+        Player p = ((PlayerCraft) e.getCraft()).getPilotPlayer();
+        if (p == null) {
+            return;
+        }
         endPilot(p);
         endInvisible(p);
     }

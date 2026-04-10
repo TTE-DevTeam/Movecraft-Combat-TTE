@@ -12,22 +12,15 @@ import net.countercraft.movecraft.craft.PlayerCraft;
 import net.countercraft.movecraft.craft.SinkingCraft;
 import net.countercraft.movecraft.util.MathUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.Dispenser;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.TNTPrimed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.util.Vector;
@@ -67,7 +60,9 @@ public class TNTTracking implements Listener {
             return;
 
         var craft = e.getDamaged();
-        DamageRecord damageRecord = new DamageRecord(cause, craft.getPilot(), new TNTCannon());
+        if (craft.getPilotPlayer() == null)
+            return;
+        DamageRecord damageRecord = new DamageRecord(cause, craft.getPilotPlayer(), new TNTCannon());
         Bukkit.getPluginManager().callEvent(new CraftDamagedByEvent(craft, damageRecord));
     }
 
@@ -122,7 +117,7 @@ public class TNTTracking implements Listener {
         if (directors.hasDirector(playerCraft))
             sender = directors.getDirector(playerCraft);
         else
-            sender = playerCraft.getPilot();
+            sender = playerCraft.getPilotPlayer();
         if (sender == null)
             return;
 

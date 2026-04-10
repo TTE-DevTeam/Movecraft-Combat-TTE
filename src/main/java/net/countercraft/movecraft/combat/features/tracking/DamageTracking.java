@@ -9,7 +9,9 @@ import net.countercraft.movecraft.craft.PlayerCraft;
 import net.countercraft.movecraft.events.CraftReleaseEvent;
 import net.countercraft.movecraft.events.CraftSinkEvent;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -89,10 +91,13 @@ public class DamageTracking implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onCollisionDamagePlayerCraft(@NotNull CollisionDamagePlayerCraftEvent e) {
         var craft = e.getDamaged();
-        var cause = e.getDamaging().getPilot();
+        var cause = e.getDamaging().getPilotEntity();
         var type = new Torpedo();
 
-        DamageRecord damageRecord = new DamageRecord(cause, craft.getPilot(), type);
+        if (!(cause instanceof Player) || (craft.getPilotPlayer() == null))
+            return;
+
+        DamageRecord damageRecord = new DamageRecord((OfflinePlayer) cause, craft.getPilotPlayer(), type);
         Bukkit.getPluginManager().callEvent(new CraftDamagedByEvent(craft, damageRecord));
     }
 
