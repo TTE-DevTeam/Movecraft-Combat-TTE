@@ -26,6 +26,7 @@ public class SingleUserDirectorRuntimeData extends AbstractDirectorRuntimeData {
     @Override
     public boolean removeDirector(IDirectorObject director) {
         if (this.directorObject != null) {
+            director.onRemoved();
             if (this.directorObject.equals(director)) {
                 this.directorObject = null;
                 return true;

@@ -7,6 +7,12 @@ public interface IDirectorObject {
 
     Vector getDirectionVector(int convergenceDistance, Vector projectileLocation);
 
+    void saveDirection(Vector direction);
+    void resetSavedDirection();
+
     void sendMessage(Component message);
 
+    default void onRemoved() {
+        // Do nothing by default
+    }
 }

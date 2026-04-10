@@ -36,6 +36,7 @@ public class MultiUserDirectorRuntimeData extends AbstractDirectorRuntimeData {
 
     @Override
     public boolean removeDirector(IDirectorObject director) {
+        director.onRemoved();
         return this.directors.values().remove(director);
     }
 }

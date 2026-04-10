@@ -25,7 +25,7 @@ public class SimpleDirectorSign extends AbstractDirectorSign {
 
         // willBeOn => will have a director
         if (willBeOn) {
-            if (!directorData.addDirector(this.associatedDirector, new LivingEntityDirector(player), collectParameters(signWrapper))) {
+            if (!directorData.addDirector(this.associatedDirector, LivingEntityDirector.of(player), collectParameters(signWrapper))) {
                 return false;
             }
             // Set the director's name
@@ -36,7 +36,7 @@ public class SimpleDirectorSign extends AbstractDirectorSign {
             }
             signWrapper.line(INDEX_DIRECTOR_NAME, Component.text(player.getDisplayName().substring(0, characterLimit - 1), Style.style(COLOR_DIRECTOR_NAME)));
         } else {
-            if (!directorData.removeDirector(new LivingEntityDirector(player), collectParameters(signWrapper))) {
+            if (!directorData.removeDirector(LivingEntityDirector.of(player), collectParameters(signWrapper))) {
                 return false;
             }
             signWrapper.line(INDEX_DIRECTOR_NAME, Component.text(""));
