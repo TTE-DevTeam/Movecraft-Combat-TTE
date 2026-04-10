@@ -22,9 +22,11 @@ public class LivingEntityDirector implements IDirectorObject {
 
     private static final String METADATA_KEY = "movecraft-combat_director_data";
 
+    // Retrieves the director object for this entity from it's metadata. If absent, it is created
     public static LivingEntityDirector of(final LivingEntity entity) {
         return of(entity, true);
     }
+    // Retrieves the director object for this entity from it's metadata. If createIfAbsent is set to true, it will create it
     public static LivingEntityDirector of(final LivingEntity entity, boolean createIfAbsent) {
         // TODO: Use persistent data container, if possible, but technically we dont need to remember this data as it is somewhat volatile => Use metadata, but this might be clunky
         LivingEntityDirector result = null;

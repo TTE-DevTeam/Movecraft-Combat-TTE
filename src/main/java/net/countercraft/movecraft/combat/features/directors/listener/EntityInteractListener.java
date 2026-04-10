@@ -11,7 +11,7 @@ public class EntityInteractListener implements Listener {
 
     @EventHandler
     public void onPlayerInteract(final PlayerInteractEvent event) {
-        if (!event.getAction().isLeftClick()) {
+        if (!(event.getAction().isLeftClick() || event.getAction().isRightClick())) {
             return;
         }
         final Material item = event.getItem().getType();
@@ -20,12 +20,16 @@ public class EntityInteractListener implements Listener {
             return;
         }
 
-        // TODO: Find the directors for this player and save the vector
+        // Find the directors for this player and save the vector or reset it, depending on what we need
         LivingEntityDirector director = LivingEntityDirector.of(event.getPlayer(), false);
         if (director == null) {
             return;
         } else {
-            director.saveDirection(event.getPlayer().getLocation().getDirection());
+            if (event.getAction().isLeftClick()) {
+                director.saveDirection(event.getPlayer().getLocation().getDirection());
+            } else {
+                director.resetSavedDirection();
+            }
             event.setCancelled(true);
         }
     }
