@@ -39,7 +39,7 @@ repositories {
 dependencies {
     annotationProcessor("org.jetbrains:annotations-java5:24.1.0")
     paperweight.paperDevBundle("1.21.4-R0.1-SNAPSHOT")
-    compileOnly("TTE-DevTeam:Windfarer:1.21.x-8.9.1-TTE@jar")
+    compileOnly("TTE-DevTeam:Windfarer:1.21.x-8.9.4-TTE@jar")
     compileOnly("it.unimi.dsi:fastutil:8.5.13")
     api("TTE-DevTeam:extraevents:1.7.3.2@jar")
 }
