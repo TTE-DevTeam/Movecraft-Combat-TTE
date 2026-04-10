@@ -7,11 +7,8 @@ import net.countercraft.movecraft.combat.utils.ConfigHelper;
 import net.countercraft.movecraft.combat.utils.DirectorUtils;
 import net.countercraft.movecraft.combat.utils.MathHelper;
 import net.countercraft.movecraft.craft.Craft;
-import net.countercraft.movecraft.craft.type.CraftType;
-import net.countercraft.movecraft.craft.type.property.BooleanProperty;
-import net.countercraft.movecraft.craft.type.property.DoubleProperty;
-import org.apache.commons.lang3.tuple.Triple;
-import org.bukkit.NamespacedKey;
+import net.countercraft.movecraft.craft.type.PropertyKey;
+import net.countercraft.movecraft.craft.type.TypeSafeCraftType;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -24,15 +21,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 
 public abstract class AbstractDirector<T extends AbstractDirectorRuntimeData> implements ConfigurationSerializable, Comparable<AbstractDirector> {
 
     private final int priority;
     private final String ident;
     private final Set<EntityType> ENTITY_TYPES = new HashSet<>();
-    private final NamespacedKey allowedOnCraftKey;
-    private final NamespacedKey maxAngleKey;
+    private final PropertyKey<Boolean> allowedOnCraftKey;
+    private final PropertyKey<Double> maxAngleKey;
 
     protected final double velocityModifier;
     protected final double maxAngle;
@@ -77,17 +73,8 @@ public abstract class AbstractDirector<T extends AbstractDirectorRuntimeData> im
 
         this.deserialize(rawData);
 
-        if (this.getAllowedOnCraftCraftTypeBooleanProperty() != null) {
-            this.allowedOnCraftKey = this.getAllowedOnCraftCraftTypeBooleanProperty().getMiddle();
-        } else {
-            this.allowedOnCraftKey = null;
-        }
-
-        if (this.getMaxAngleCraftTypeDoubleProperty() != null) {
-            this.maxAngleKey = this.getMaxAngleCraftTypeDoubleProperty().getMiddle();
-        } else {
-            this.maxAngleKey = null;
-        }
+        this.allowedOnCraftKey = this.getAllowedOnCraftCraftTypeBooleanProperty();
+        this.maxAngleKey = this.getMaxAngleCraftTypeDoubleProperty();
     }
 
     protected abstract void deserialize(Map<String, Object> rawData);
@@ -161,14 +148,14 @@ public abstract class AbstractDirector<T extends AbstractDirectorRuntimeData> im
 
     public boolean allowedOnCraft(@NotNull Craft craft) {
         if (this.allowedOnCraftKey != null) {
-            return craft.getType().getBoolProperty(this.allowedOnCraftKey);
+            return craft.getCraftProperties().get(this.allowedOnCraftKey);
         }
         return true;
     }
 
     protected double getMaxAngle(@NotNull Craft craft) {
         if (this.maxAngleKey != null) {
-            return craft.getType().getDoubleProperty(this.maxAngleKey);
+            return craft.getCraftProperties().get(this.maxAngleKey);
         } else {
             return this.maxAngle;
         }
@@ -183,17 +170,17 @@ public abstract class AbstractDirector<T extends AbstractDirectorRuntimeData> im
         }
     }
 
-    protected abstract Triple<String, NamespacedKey, Function<CraftType, Double>> getMaxAngleCraftTypeDoubleProperty();
-    protected abstract Triple<String, NamespacedKey, Function<CraftType, Boolean>> getAllowedOnCraftCraftTypeBooleanProperty();
+    protected abstract PropertyKey<Double> getMaxAngleCraftTypeDoubleProperty();
+    protected abstract PropertyKey<Boolean> getAllowedOnCraftCraftTypeBooleanProperty();
 
     public void registerCraftTypeProperties() {
-        Triple<String, NamespacedKey, Function<CraftType, Double>> angleProperty = this.getMaxAngleCraftTypeDoubleProperty();
+        PropertyKey<Double> angleProperty = this.getMaxAngleCraftTypeDoubleProperty();
         if (angleProperty != null) {
-            CraftType.registerProperty(new DoubleProperty(angleProperty.getLeft(), angleProperty.getMiddle(), angleProperty.getRight()));
+            TypeSafeCraftType.PROPERTY_REGISTRY.register(angleProperty.key(), angleProperty, false);
         }
-        Triple<String, NamespacedKey, Function<CraftType, Boolean>> allowedProperty = this.getAllowedOnCraftCraftTypeBooleanProperty();
+        PropertyKey<Boolean> allowedProperty = this.getAllowedOnCraftCraftTypeBooleanProperty();
         if (angleProperty != null) {
-            CraftType.registerProperty(new BooleanProperty(allowedProperty.getLeft(), allowedProperty.getMiddle(), allowedProperty.getRight()));
+            TypeSafeCraftType.PROPERTY_REGISTRY.register(allowedProperty.key(), allowedProperty, false);
         }
     }
 

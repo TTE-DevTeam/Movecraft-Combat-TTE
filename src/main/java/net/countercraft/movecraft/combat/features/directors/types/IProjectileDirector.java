@@ -2,8 +2,8 @@ package net.countercraft.movecraft.combat.features.directors.types;
 
 import net.countercraft.movecraft.combat.utils.ConfigHelper;
 import net.countercraft.movecraft.craft.Craft;
-import net.countercraft.movecraft.craft.type.CraftType;
-import org.apache.commons.lang3.tuple.Triple;
+import net.countercraft.movecraft.craft.type.PropertyKey;
+import net.countercraft.movecraft.craft.type.PropertyKeyTypes;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Projectile;
@@ -14,7 +14,6 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
-import java.util.function.Function;
 
 public interface IProjectileDirector {
 
@@ -79,11 +78,11 @@ public interface IProjectileDirector {
         }
     }
 
-    public default Triple<String, NamespacedKey, Function<CraftType, Boolean>> projectileDirector_getAllowedOnCraftCraftTypeBooleanProperty() {
-        return Triple.of(ConfigHelper.namespaceToCraftKey(this.getALlowedOnCraftKey()), this.getALlowedOnCraftKey(), c -> this.getDefaultAllowedOnCraft());
+    public default PropertyKey<Boolean> projectileDirector_getAllowedOnCraftCraftTypeBooleanProperty() {
+        return PropertyKeyTypes.boolPropertyKey(this.getALlowedOnCraftKey(), this.getDefaultAllowedOnCraft());
     }
 
-    public default Triple<String, NamespacedKey, Function<CraftType, Double>> projectileDirector_getMaxAngleCraftTypeDoubleProperty() {
-        return Triple.of(ConfigHelper.namespaceToCraftKey(this.getMaxAngleKey()), this.getMaxAngleKey(), c -> this.getDefaultMaxAngle());
+    public default PropertyKey<Double> projectileDirector_getMaxAngleCraftTypeDoubleProperty() {
+        return PropertyKeyTypes.doublePropertyKey(this.getMaxAngleKey(), this.getDefaultMaxAngle());
     }
 }

@@ -2,7 +2,7 @@ package net.countercraft.movecraft.combat.features.directors.listener;
 
 import net.countercraft.movecraft.MovecraftLocation;
 import net.countercraft.movecraft.craft.*;
-import net.countercraft.movecraft.craft.type.CraftType;
+import net.countercraft.movecraft.craft.type.TypeSafeCraftType;
 import net.countercraft.movecraft.events.CraftPilotEvent;
 import net.countercraft.movecraft.events.CraftReleaseEvent;
 import net.countercraft.movecraft.processing.functions.Result;
@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
+// TODO: Use the SubcraftDetectionTask from TTE-Additions
 public class CraftPilotListener implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
@@ -38,7 +39,7 @@ public class CraftPilotListener implements Listener {
     }
 
     private static void flagSubcraftDispensers(Craft craft) {
-        Map<MovecraftLocation, Map<CraftType, String>> signLocations = new HashMap<>();
+        Map<MovecraftLocation, Map<TypeSafeCraftType, String>> signLocations = new HashMap<>();
         for (MovecraftLocation mLoc : craft.getHitBox()) {
             Block block = mLoc.toBukkit(craft.getWorld()).getBlock();
 
@@ -56,7 +57,7 @@ public class CraftPilotListener implements Listener {
                 AbstractMovecraftSign ams = MovecraftSignRegistry.INSTANCE.get(signWrapper.line(0));
                 // Now, are you a subcraft sign?
                 if (ams instanceof AbstractSubcraftSign ass) {
-                    CraftType craftType = CraftManager.getInstance().getCraftTypeFromString(signWrapper.getRaw(1));
+                    TypeSafeCraftType craftType = CraftManager.getInstance().getCraftTypeByName(signWrapper.getRaw(1));
                     if (craftType == null) {
                         continue;
                     }
@@ -69,8 +70,8 @@ public class CraftPilotListener implements Listener {
             return;
         }
 
-        for (Map.Entry<MovecraftLocation, Map<CraftType, String>> entry : signLocations.entrySet()) {
-            for (Map.Entry<CraftType, String> entryInner : entry.getValue().entrySet()) {
+        for (Map.Entry<MovecraftLocation, Map<TypeSafeCraftType, String>> entry : signLocations.entrySet()) {
+            for (Map.Entry<TypeSafeCraftType, String> entryInner : entry.getValue().entrySet()) {
                 CraftManager.getInstance().detect(
                         entry.getKey(),
                         entryInner.getKey(),

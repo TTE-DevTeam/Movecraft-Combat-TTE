@@ -15,7 +15,7 @@ import net.countercraft.movecraft.craft.CraftManager;
 import net.countercraft.movecraft.craft.PilotedCraft;
 import net.countercraft.movecraft.craft.PlayerCraft;
 import net.countercraft.movecraft.craft.SinkingCraft;
-import net.countercraft.movecraft.craft.type.CraftType;
+import net.countercraft.movecraft.craft.type.PropertyKeys;
 import net.countercraft.movecraft.events.CraftReleaseEvent;
 import net.countercraft.movecraft.events.CraftScuttleEvent;
 import net.countercraft.movecraft.events.CraftSinkEvent;
@@ -24,6 +24,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -66,6 +67,9 @@ public class CombatRelease extends BukkitRunnable implements Listener {
 
 
     public boolean isInCombat(Player player) {
+        if (player == null) {
+            return false;
+        }
         if (!EnableCombatReleaseTracking)
             return false;
         if (!records.containsKey(player))
@@ -113,10 +117,10 @@ public class CombatRelease extends BukkitRunnable implements Listener {
         CraftReleaseEvent.Reason reason = e.getReason();
         if (reason != CraftReleaseEvent.Reason.PLAYER && reason != CraftReleaseEvent.Reason.DISCONNECT)
             return;
-        if (craft.getType().getBoolProperty(CraftType.CRUISE_ON_PILOT))
+        if (craft.getCraftProperties().get(PropertyKeys.CRUISE_ON_PILOT))
             return;
 
-        Player player = ((PlayerCraft) craft).getPilot();
+        Player player = ((PlayerCraft) craft).getPilotPlayer();
         if (!isInCombat(player))
             return;
         records.remove(player);
@@ -172,7 +176,7 @@ public class CombatRelease extends BukkitRunnable implements Listener {
 
         Player cause = e.getCause();
         if (e.getCraft() instanceof PilotedCraft) {
-            Player pilot = ((PilotedCraft) e.getCraft()).getPilot();
+            Entity pilot = ((PilotedCraft) e.getCraft()).getPilotEntity();
             if (pilot != cause)
                 return; // Always let /scuttle [player] run.
         }
@@ -192,7 +196,7 @@ public class CombatRelease extends BukkitRunnable implements Listener {
             return;
 
 
-        Player player = ((PlayerCraft) e.getCraft()).getPilot();
+        Player player = ((PlayerCraft) e.getCraft()).getPilotPlayer();
         records.remove(player);
         stopCombat(player);
     }
@@ -202,7 +206,7 @@ public class CombatRelease extends BukkitRunnable implements Listener {
         if (!EnableCombatReleaseTracking)
             return;
 
-        Player player = ((PlayerCraft) e.getCraft()).getPilot();
+        Player player = ((PlayerCraft) e.getCraft()).getPilotPlayer();
         if (!records.containsKey(player)
                 || System.currentTimeMillis() - records.get(player) > DamageTracking.DamageTimeout * 1000L)
             startCombat(player);
@@ -215,7 +219,7 @@ public class CombatRelease extends BukkitRunnable implements Listener {
         if (!EnableCombatReleaseTracking)
             return;
 
-        Player player = ((PlayerCraft) e.getCraft()).getPilot();
+        Player player = ((PlayerCraft) e.getCraft()).getPilotPlayer();
         if (!records.containsKey(player)
                 || System.currentTimeMillis() - records.get(player) > DamageTracking.DamageTimeout * 1000L)
             startCombat(player);

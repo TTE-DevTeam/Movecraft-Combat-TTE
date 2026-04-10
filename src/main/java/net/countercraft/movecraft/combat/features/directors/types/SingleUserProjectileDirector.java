@@ -1,8 +1,7 @@
 package net.countercraft.movecraft.combat.features.directors.types;
 
 import net.countercraft.movecraft.craft.Craft;
-import net.countercraft.movecraft.craft.type.CraftType;
-import org.apache.commons.lang3.tuple.Triple;
+import net.countercraft.movecraft.craft.type.PropertyKey;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
@@ -10,7 +9,6 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
-import java.util.function.Function;
 
 public class SingleUserProjectileDirector extends AbstractSingleUserDirector implements IProjectileDirector {
 
@@ -39,12 +37,12 @@ public class SingleUserProjectileDirector extends AbstractSingleUserDirector imp
     }
 
     @Override
-    protected Triple<String, NamespacedKey, Function<CraftType, Double>> getMaxAngleCraftTypeDoubleProperty() {
+    protected PropertyKey<Double> getMaxAngleCraftTypeDoubleProperty() {
         return projectileDirector_getMaxAngleCraftTypeDoubleProperty();
     }
 
     @Override
-    protected Triple<String, NamespacedKey, Function<CraftType, Boolean>> getAllowedOnCraftCraftTypeBooleanProperty() {
+    protected PropertyKey<Boolean> getAllowedOnCraftCraftTypeBooleanProperty() {
         return projectileDirector_getAllowedOnCraftCraftTypeBooleanProperty();
     }
 

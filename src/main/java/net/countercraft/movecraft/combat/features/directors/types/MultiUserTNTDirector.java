@@ -2,15 +2,12 @@ package net.countercraft.movecraft.combat.features.directors.types;
 
 import net.countercraft.movecraft.combat.features.directors.types.data.MultiUserDirectorRuntimeData;
 import net.countercraft.movecraft.craft.Craft;
-import net.countercraft.movecraft.craft.type.CraftType;
-import org.apache.commons.lang3.tuple.Triple;
-import org.bukkit.NamespacedKey;
+import net.countercraft.movecraft.craft.type.PropertyKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
-import java.util.function.Function;
 
 public class MultiUserTNTDirector extends AbstractMultiUserDirector<MultiUserDirectorRuntimeData> implements IHorizontalDirector, ITNTDirector {
 
@@ -47,12 +44,12 @@ public class MultiUserTNTDirector extends AbstractMultiUserDirector<MultiUserDir
     }
 
     @Override
-    protected Triple<String, NamespacedKey, Function<CraftType, Double>> getMaxAngleCraftTypeDoubleProperty() {
+    protected PropertyKey<Double> getMaxAngleCraftTypeDoubleProperty() {
         return tntDirector_getMaxAngleCraftTypeDoubleProperty();
     }
 
     @Override
-    protected Triple<String, NamespacedKey, Function<CraftType, Boolean>> getAllowedOnCraftCraftTypeBooleanProperty() {
+    protected PropertyKey<Boolean> getAllowedOnCraftCraftTypeBooleanProperty() {
         return tntDirector_getAllowedOnCraftCraftTypeBooleanProperty();
     }
 

@@ -1,8 +1,8 @@
 package net.countercraft.movecraft.combat.features.directors.types;
 
 import net.countercraft.movecraft.craft.Craft;
-import net.countercraft.movecraft.craft.type.CraftType;
-import org.apache.commons.lang3.tuple.Triple;
+import net.countercraft.movecraft.craft.type.PropertyKey;
+import net.countercraft.movecraft.craft.type.PropertyKeyTypes;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.TNTPrimed;
@@ -11,7 +11,6 @@ import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
-import java.util.function.Function;
 
 public interface ITNTDirector {
 
@@ -38,12 +37,12 @@ public interface ITNTDirector {
         }
     }
 
-    public default Triple<String, NamespacedKey, Function<CraftType, Double>> tntDirector_getMaxAngleCraftTypeDoubleProperty() {
-        return Triple.of("maxTNTDirectorAngle", new NamespacedKey("movecraft-combat", "max_tnt_director_angle"), c -> 60.0D);
+    public default PropertyKey<Double> tntDirector_getMaxAngleCraftTypeDoubleProperty() {
+        return PropertyKeyTypes.doublePropertyKey(new NamespacedKey("movecraft-combat", "max_tnt_director_angle"), 60.0D);
     }
 
-    public default Triple<String, NamespacedKey, Function<CraftType, Boolean>> tntDirector_getAllowedOnCraftCraftTypeBooleanProperty() {
-        return Triple.of("allowTNTDirector", new NamespacedKey("movecraft-combat", "allow_tnt_director"), c -> false);
+    public default PropertyKey<Boolean> tntDirector_getAllowedOnCraftCraftTypeBooleanProperty() {
+        return PropertyKeyTypes.boolPropertyKey(new NamespacedKey("movecraft-combat", "allow_tnt_director"), false);
     }
 
 }

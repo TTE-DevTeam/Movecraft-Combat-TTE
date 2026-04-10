@@ -30,6 +30,7 @@ import java.util.Random;
 
 public class MovementTracers implements Listener {
 
+    // TODO: Switch to new registration ASAP
     public static final NamespacedKey MOVEMENT_TRACER_BLOCKS = new NamespacedKey("movecraft-combat", "movement_tracer_blocks");
     public static final NamespacedKey MOVEMENT_TRACER_CHANCE = new NamespacedKey("movecraft-combat", "movement_tracer_chance");
     public static final NamespacedKey MAX_MOVEMENT_TRACERS = new NamespacedKey("movecraft-combat", "max_movement_tracers");
