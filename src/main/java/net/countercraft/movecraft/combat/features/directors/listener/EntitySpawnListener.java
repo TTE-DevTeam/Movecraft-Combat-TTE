@@ -52,6 +52,7 @@ public class EntitySpawnListener implements Listener {
 
         String containerName = PlainTextComponentSerializer.plainText().serialize(container.customName());
 
+        // TODO: Potentially throw all this into a async bukkit runnable
         DirectorHelper.flagEntity(entity, containerName);
         // TODO: Test performance!
         if (entity instanceof TNTPrimed tntPrimed) {
@@ -90,7 +91,7 @@ public class EntitySpawnListener implements Listener {
         if (craft == null) {
             return;
         }
-        //Call the director event for the craft, rest is handled on the craft itself
+        // Call the director event for the craft, rest is handled on the craft itself
         DirectorDataAccess.setPreDirectionVelocity(event.getEntity(), event.getEntity().getVelocity().clone());
         if (CraftDirectorData.get(craft).attemptDirectEntity(event.getEntity())) {
             DirectorDataAccess.markDirectionPoint(event.getEntity());
