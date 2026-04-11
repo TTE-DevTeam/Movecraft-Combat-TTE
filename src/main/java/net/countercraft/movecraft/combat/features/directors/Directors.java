@@ -95,7 +95,6 @@ public class Directors extends BukkitRunnable {
 
     }
 
-
     public void addDirector(@NotNull PlayerCraft craft, @NotNull Player player) {
         if (directors.containsValue(player))
             directors.inverse().remove(player);

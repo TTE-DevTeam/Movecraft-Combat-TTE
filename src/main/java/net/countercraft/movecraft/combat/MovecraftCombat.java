@@ -6,10 +6,7 @@ import net.countercraft.movecraft.combat.features.directors.AADirectors;
 import net.countercraft.movecraft.combat.features.directors.ArrowDirectors;
 import net.countercraft.movecraft.combat.features.directors.CannonDirectors;
 import net.countercraft.movecraft.combat.features.directors.Directors;
-import net.countercraft.movecraft.combat.features.directors.listener.CraftPilotListener;
-import net.countercraft.movecraft.combat.features.directors.listener.EntitySpawnListener;
-import net.countercraft.movecraft.combat.features.directors.listener.ProjectilePropellListener;
-import net.countercraft.movecraft.combat.features.directors.listener.TNTPropellListener;
+import net.countercraft.movecraft.combat.features.directors.listener.*;
 import net.countercraft.movecraft.combat.features.directors.types.MultiUserProjectileDirector;
 import net.countercraft.movecraft.combat.features.directors.types.MultiUserTNTDirector;
 import net.countercraft.movecraft.combat.features.directors.types.SingleUserProjectileDirector;
@@ -52,10 +49,10 @@ public final class MovecraftCombat extends JavaPlugin {
     public void onEnable() {
         instance = this;
 
-        ConfigurationSerialization.registerClass(SingleUserProjectileDirector.class, "SingleUserProjectileDirector");
-        ConfigurationSerialization.registerClass(MultiUserProjectileDirector.class, "MultiUserProjectileDirector");
-        ConfigurationSerialization.registerClass(SingleUserTNTDirector.class, "SingleUserTNTDirector");
-        ConfigurationSerialization.registerClass(MultiUserTNTDirector.class, "MultiUserTNTDirector");
+        ConfigurationSerialization.registerClass(SingleUserProjectileDirector.class, "Movecraft-Combat_SingleUserProjectileDirector");
+        ConfigurationSerialization.registerClass(MultiUserProjectileDirector.class, "Movecraft-Combat_MultiUserProjectileDirector");
+        ConfigurationSerialization.registerClass(SingleUserTNTDirector.class, "Movecraft-Combat_SingleUserTNTDirector");
+        ConfigurationSerialization.registerClass(MultiUserTNTDirector.class, "Movecraft-Combat_MultiUserTNTDirector");
 
         // Save default config, create default userdata and language if needed
         saveDefaultConfig();
@@ -107,6 +104,7 @@ public final class MovecraftCombat extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new EntitySpawnListener(), this);
         getServer().getPluginManager().registerEvents(new ProjectilePropellListener(), this);
         getServer().getPluginManager().registerEvents(new TNTPropellListener(), this);
+        getServer().getPluginManager().registerEvents(new EntityInteractListener(), this);
 
         // Register features
         var combatRelease = new CombatRelease();
