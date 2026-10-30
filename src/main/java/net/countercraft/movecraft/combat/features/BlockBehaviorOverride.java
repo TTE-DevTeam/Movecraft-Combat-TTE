@@ -8,6 +8,7 @@ import net.minecraft.world.entity.EntityTypes;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.craftbukkit.util.CraftMagicNumbers;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -350,10 +351,26 @@ public class BlockBehaviorOverride {
             return method.invoke(null, m);
         }
 
+        public static Field getField(Class<?> clazz, String fieldName)
+                throws NoSuchFieldException {
+
+            Class<?> current = clazz;
+
+            while (current != null) {
+                try {
+                    return current.getDeclaredField(fieldName);
+                } catch (NoSuchFieldException e) {
+                    current = current.getSuperclass();
+                }
+            }
+
+            throw new NoSuchFieldException(fieldName);
+        }
+
         protected static <T> void writeField(@NotNull Object block, @NotNull Consumer<T> whatToDoWithField,
                 String fieldName) throws IllegalAccessException, NoSuchFieldException, ClassCastException,
                 InaccessibleObjectException, SecurityException {
-            Field field = block.getClass().getField(fieldName);
+            Field field = getField(block.getClass(), fieldName);
             field.setAccessible(true);
             T obj = (T) field.get(block);
             whatToDoWithField.accept(obj);
@@ -362,7 +379,7 @@ public class BlockBehaviorOverride {
         protected static <T> void writeField(@NotNull Object block, T value, String fieldName)
                 throws IllegalAccessException, NoSuchFieldException, ClassCastException, InaccessibleObjectException,
                 SecurityException {
-            Field field = block.getClass().getField(fieldName);
+            Field field = getField(block.getClass(), fieldName);
             field.setAccessible(true);
             field.set(block, value);
         }
@@ -378,7 +395,7 @@ public class BlockBehaviorOverride {
         protected static <T> T getFieldValue(@NotNull Object instance, String fieldName)
                 throws IllegalAccessException, NoSuchFieldException, ClassCastException, InaccessibleObjectException,
                 SecurityException {
-            Field field = instance.getClass().getField(fieldName);
+            Field field = getField(instance.getClass(), fieldName);
             field.setAccessible(true);
             T obj = (T) field.get(instance);
             return obj;
