@@ -3,7 +3,7 @@ plugins {
     `maven-publish`
     id("io.github.apdevteam.github-packages") version "1.2.2"
     id("io.papermc.hangar-publish-plugin") version "0.1.3"
-    id("io.papermc.paperweight.userdev") version "2.0.0-beta.13"
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.23"
     id("io.github.goooler.shadow") version "8.1.7"
 }
 
@@ -38,7 +38,7 @@ repositories {
 
 dependencies {
     annotationProcessor("org.jetbrains:annotations-java5:24.1.0")
-    paperweight.paperDevBundle("1.21.4-R0.1-SNAPSHOT")
+    paperweight.paperDevBundle("26.3.build.+")
     compileOnly("TTE-DevTeam:Windfarer:1.21.x-8.9.4-TTE@jar")
     compileOnly("it.unimi.dsi:fastutil:8.5.13")
     api("TTE-DevTeam:extraevents:1.7.3.2@jar")
@@ -47,9 +47,9 @@ dependencies {
 paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArtifactConfiguration.MOJANG_PRODUCTION
 
 group = "net.countercraft.movecraft.combat"
-version = "2.2.2"
+version = "2.3.0"
 description = "Movecraft-Combat-TTE"
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
+java.toolchain.languageVersion = JavaLanguageVersion.of(25)
 
 tasks.jar {
     archiveBaseName.set("Movecraft-Combat")
