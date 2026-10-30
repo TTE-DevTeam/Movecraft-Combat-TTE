@@ -72,6 +72,10 @@ public class PlayerConfig {
         }
     }
 
+    public void setTNTMode(TNTMode mode) {
+        this.tntMode = mode;
+    }
+
     @NotNull
     public MovementSetting getMovementSetting() {
         return movementSetting;
@@ -92,6 +96,14 @@ public class PlayerConfig {
             default:
                 throw new IllegalArgumentException();
         }
+    }
+
+    public void setMovementSetting(@NotNull MovementSetting setting) {
+        this.movementSetting = setting;
+    }
+
+    public void setTNTSetting(@NotNull TNTSetting setting) {
+        this.tntSetting = setting;
     }
 
     public enum TNTSetting {

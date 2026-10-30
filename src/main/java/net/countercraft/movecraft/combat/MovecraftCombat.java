@@ -36,6 +36,11 @@ public final class MovecraftCombat extends JavaPlugin {
         return instance;
     }
 
+    public PlayerManager getPlayerManager() {
+        return playerManager;
+    }
+
+    private final PlayerManager playerManager = new PlayerManager();
 
     @Override
     public void onLoad() {
@@ -77,9 +82,9 @@ public final class MovecraftCombat extends JavaPlugin {
         CombatRelease.load(getConfig());
 
         Directors.load(getConfig());
-        //AADirectors.load(getConfig());
-        //ArrowDirectors.load(getConfig());
-        //CannonDirectors.load(getConfig());
+        AADirectors.load(getConfig());
+        ArrowDirectors.load(getConfig());
+        CannonDirectors.load(getConfig());
 
         MovementTracers.load(getConfig());
         TNTTracers.load(getConfig());
@@ -102,8 +107,8 @@ public final class MovecraftCombat extends JavaPlugin {
         // Director rework listeners
         getServer().getPluginManager().registerEvents(new CraftPilotListener(), this);
         getServer().getPluginManager().registerEvents(new EntitySpawnListener(), this);
-        getServer().getPluginManager().registerEvents(new ProjectilePropellListener(), this);
-        getServer().getPluginManager().registerEvents(new TNTPropellListener(), this);
+        //getServer().getPluginManager().registerEvents(new ProjectilePropellListener(), this);
+        //getServer().getPluginManager().registerEvents(new TNTPropellListener(), this);
         getServer().getPluginManager().registerEvents(new EntityInteractListener(), this);
 
         // Register features
@@ -121,7 +126,6 @@ public final class MovecraftCombat extends JavaPlugin {
         getServer().getPluginManager().registerEvents(cannonDirectors, this);
         cannonDirectors.runTaskTimer(this, 0, 1); // Every tick
 
-        var playerManager = new PlayerManager();
         getServer().getPluginManager().registerEvents(playerManager, this);
         getServer().getPluginManager().registerEvents(new MovementTracers(playerManager), this);
         var tntTracers = new TNTTracers(playerManager);
@@ -145,12 +149,6 @@ public final class MovecraftCombat extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new FireballLifespan(), this);
         getServer().getPluginManager().registerEvents(new FireballPenetration(), this);
         getServer().getPluginManager().registerEvents(new ReImplementTNTTranslocation(), this);
-
-
-        // Register commands
-        getCommand("tnttracersetting").setExecutor(new TNTTracerSettingCommand(playerManager));
-        getCommand("tnttracermode").setExecutor(new TNTTracerModeCommand(playerManager));
-        getCommand("movementtracersetting").setExecutor(new MovementTracerSettingCommand(playerManager));
 
         // Modify blast resistances
         BlockBehaviorOverride.enable();

@@ -47,6 +47,16 @@ public class PlayerManager implements Listener {
         config.setTNTSetting(setting);
     }
 
+    public void setTNTSetting(Player player, PlayerConfig.TNTSetting setting) {
+        var config = cache.get(player);
+        if (config == null) {
+            config = loadPlayer(player);
+            cache.put(player, config);
+        }
+
+        config.setTNTSetting(setting);
+    }
+
     @NotNull
     public PlayerConfig.TNTMode getTNTMode(Player player) {
         var config = cache.get(player);
@@ -66,6 +76,16 @@ public class PlayerManager implements Listener {
         config.setTNTMode(mode);
     }
 
+    public void setTNTMode(Player player, PlayerConfig.TNTMode mode) {
+        var config = cache.get(player);
+        if (config == null) {
+            config = loadPlayer(player);
+            cache.put(player, config);
+        }
+
+        config.setTNTMode(mode);
+    }
+
     @NotNull
     public PlayerConfig.MovementSetting getMovementSetting(Player player) {
         var config = cache.get(player);
@@ -76,6 +96,16 @@ public class PlayerManager implements Listener {
     }
 
     public void setMovementSetting(Player player, String setting) {
+        var config = cache.get(player);
+        if (config == null) {
+            config = loadPlayer(player);
+            cache.put(player, config);
+        }
+
+        config.setMovementSetting(setting);
+    }
+
+    public void setMovementSetting(Player player, PlayerConfig.MovementSetting setting) {
         var config = cache.get(player);
         if (config == null) {
             config = loadPlayer(player);

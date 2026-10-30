@@ -1,78 +1,31 @@
 package net.countercraft.movecraft.combat.features.tracers.commands;
 
-import net.countercraft.movecraft.combat.features.tracers.config.PlayerManager;
-import net.countercraft.movecraft.combat.localisation.I18nSupport;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
+import io.papermc.paper.command.brigadier.Commands;
+import net.countercraft.movecraft.combat.MovecraftCombat;
+import net.countercraft.movecraft.combat.features.tracers.config.PlayerConfig;
+import net.countercraft.movecraft.combat.utils.EnumArgumentType;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import static net.countercraft.movecraft.util.ChatUtils.MOVECRAFT_COMMAND_PREFIX;
+public class MovementTracerSettingCommand {
 
-public class MovementTracerSettingCommand implements TabExecutor {
-    @NotNull
-    private final PlayerManager manager;
-
-
-    public MovementTracerSettingCommand(@NotNull PlayerManager manager) {
-        this.manager = manager;
+    public static void register(final Commands commands) {
+        commands.register(
+                Commands.literal("movementtracersetting")
+                        .requires(source -> {
+                            return (source.getExecutor() instanceof Player);
+                        })
+                        .then(Commands.argument("densitysetting", EnumArgumentType.ofEnum(PlayerConfig.MovementSetting.class))
+                                .executes(context -> {
+                                    MovecraftCombat.getInstance().getPlayerManager().setMovementSetting((Player) context.getSource().getExecutor(), context.getArgument("densitysetting", PlayerConfig.MovementSetting.class));
+                                    return com.mojang.brigadier.Command.SINGLE_SUCCESS;
+                                })
+                        )
+                        .build(),
+                "Command to change movement tracer settings",
+                List.of()
+        );
     }
 
-
-    @Override
-    public boolean onCommand(@NotNull CommandSender commandSender, @NotNull Command command, @NotNull String label, String[] args) {
-        if(!command.getName().equalsIgnoreCase("movementtracersetting"))
-            return false;
-
-        if(!(commandSender instanceof Player)) {
-            commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Command - Must Be Player"));
-            return true;
-        }
-        Player player = (Player) commandSender;
-
-        if(args.length == 0) {
-            commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Command - Current Setting") + ": " + manager.getMovementSetting(player));
-            return true;
-        }
-        if (args.length != 1) {
-            commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Command - Specify Setting"));
-            return true;
-        }
-
-        String setting = args[0].toUpperCase();
-        try {
-            manager.setMovementSetting(player, setting);
-            commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Command - Movement Tracer Set") + ": " + setting);
-            return true;
-        }
-        catch (IllegalArgumentException e) {
-            commandSender.sendMessage(MOVECRAFT_COMMAND_PREFIX + I18nSupport.getInternationalisedString("Command - Specify Valid Setting"));
-            return true;
-        }
-    }
-
-    @Override
-    public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, String[] strings) {
-        final List<String> tabCompletions = new ArrayList<>();
-        if (strings.length <= 1) {
-            tabCompletions.add("OFF");
-            tabCompletions.add("HIGH");
-            tabCompletions.add("LOW");
-        }
-        if (strings.length == 0) {
-            return tabCompletions;
-        }
-        final List<String> completions = new ArrayList<>();
-        for (String completion : tabCompletions) {
-            if (!completion.startsWith(strings[strings.length - 1].toUpperCase()))
-                continue;
-
-            completions.add(completion);
-        }
-        return completions;
-    }
 }
