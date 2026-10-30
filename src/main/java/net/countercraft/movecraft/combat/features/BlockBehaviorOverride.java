@@ -4,6 +4,7 @@ import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import net.countercraft.movecraft.combat.MovecraftCombat;
 import net.countercraft.movecraft.util.Tags;
+import net.minecraft.world.entity.EntityTypes;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -200,7 +201,7 @@ public class BlockBehaviorOverride {
             String[] parts = Bukkit.getServer().getMinecraftVersion().split("\\.");
             if (parts.length < 2)
                 throw new IllegalArgumentException();
-            int major_version = Integer.parseInt(parts[1]);
+            int major_version = parts.length == 2 ? Integer.parseInt(parts[0]) : Integer.parseInt(parts[1]);
             NMSHelper result;
             if (major_version < 20) {
                 result = new NMSSpigotMappings();
