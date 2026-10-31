@@ -14,6 +14,10 @@ public class EntityInteractListener implements Listener {
         if (!(event.getAction().isLeftClick() || event.getAction().isRightClick())) {
             return;
         }
+        if (event.getItem() == null) {
+            return;
+        }
+
         final Material item = event.getItem().getType();
 
         if (item != Directors.DirectorTool) {
