@@ -41,7 +41,6 @@ dependencies {
     paperweight.paperDevBundle("26.3.build.+")
     compileOnly("TTE-DevTeam:Windfarer:1.21.x-8.9.4-TTE@jar")
     compileOnly("it.unimi.dsi:fastutil:8.5.13")
-    api("TTE-DevTeam:extraevents:1.7.3.2@jar")
 }
 
 paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArtifactConfiguration.MOJANG_PRODUCTION
