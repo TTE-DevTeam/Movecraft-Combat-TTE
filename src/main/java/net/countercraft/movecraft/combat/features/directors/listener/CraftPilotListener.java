@@ -35,7 +35,7 @@ public class CraftPilotListener implements Listener {
         }
 
         flagTileEntities(event.getCraft(), block -> (block instanceof Dispenser));
-        flagSubcraftDispensers(event.getCraft());
+        //flagSubcraftDispensers(event.getCraft());
     }
 
     private static void flagSubcraftDispensers(Craft craft) {

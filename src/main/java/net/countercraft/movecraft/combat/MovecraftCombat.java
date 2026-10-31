@@ -105,11 +105,11 @@ public final class MovecraftCombat extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ExplosionListener(), this);
 
         // Director rework listeners
-        getServer().getPluginManager().registerEvents(new CraftPilotListener(), this);
-        getServer().getPluginManager().registerEvents(new EntitySpawnListener(), this);
+        //getServer().getPluginManager().registerEvents(new CraftPilotListener(), this);
+        //getServer().getPluginManager().registerEvents(new EntitySpawnListener(), this);
         //getServer().getPluginManager().registerEvents(new ProjectilePropellListener(), this);
         //getServer().getPluginManager().registerEvents(new TNTPropellListener(), this);
-        getServer().getPluginManager().registerEvents(new EntityInteractListener(), this);
+        //getServer().getPluginManager().registerEvents(new EntityInteractListener(), this);
 
         // Register features
         var combatRelease = new CombatRelease();
