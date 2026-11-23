@@ -46,7 +46,7 @@ dependencies {
 paperweight.reobfArtifactConfiguration = io.papermc.paperweight.userdev.ReobfArtifactConfiguration.MOJANG_PRODUCTION
 
 group = "net.countercraft.movecraft.combat"
-version = "2.3.0"
+version = "2.4.0"
 description = "Movecraft-Combat-TTE"
 java.toolchain.languageVersion = JavaLanguageVersion.of(25)
 
