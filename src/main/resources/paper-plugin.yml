@@ -1,11 +1,12 @@
-name: Movecraft-Combat
+name: Windfarer-Combat
+provides: [Movecraft-Combat]
 version: ${projectVersion}
 main: net.countercraft.movecraft.combat.MovecraftCombat
 api-version: 1.21
-prefix: Movecraft-Combat
-author: TylerS1066
-contributors: [cccm5, a4bde, eirik1996, BaccaYarro]
-description: Combat features of Movecraft
+prefix: Windfarer-Combat
+author: TTE-DevTeam
+contributors: [cccm5, a4bde, eirik1996, BaccaYarro, TylerS1066]
+description: Combat features of Windfarer; Adjusted fork of APDev Movecraft combat for prolongued compatibility
 website: https://github.com/TTE-DevTeam/Movecraft-Combat-TTE
 bootstrapper: net.countercraft.movecraft.combat.MovecraftCombatBootstrapper
 dependencies:
